@@ -1,6 +1,7 @@
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 import uuid
 import random
+import json
 
 app = FastAPI()
 
@@ -44,17 +45,23 @@ async def broadcast(room_id: str, payload: dict, exclude_player_id=None):
 
 def create_room(player_id: str, username: str):
     room_id = generate_room_code()
-    display_name = get_unique_display_name([])
+    display_name = get_unique_display_name([]) # assign a display name to hosting player
 
-    rooms[room_id] = {
+    new_room = {
+        "id": room_id,
+        "hostId": player_id,
         "players": [{
             "id": player_id,
             "username": username,
             "displayName": display_name,
             "isHost": True
         }],
-        "hostId": player_id
+        "state": "lobby",
+        "currentRound": 0,
+        "currentPrompt": None
     }
+
+    rooms[room_id] = new_room
 
     return room_id, display_name
 
@@ -71,6 +78,7 @@ def join_room(player_id: str, username: str, room_id: str):
     }
 
     room["players"].append(new_player)
+
     return display_name, room
 
 
@@ -86,12 +94,29 @@ async def websocket_endpoint(ws: WebSocket):
 
     try:
         while True:
-            data = await ws.receive_json()
+            message = await ws.receive()
+
+            if message["type"] == "websocket.disconnect":
+                break
+
+            raw = message.get("text")
+            if raw is None:
+                continue
+
+            try:
+                data = json.loads(raw)
+            except json.JSONDecodeError:
+                continue
+
             event_type = data.get("type")
+            username = data.get("username")
+            if not event_type:
+                continue
+
+            print(f"event_type: {event_type}, username: {username}")
 
             # --- CREATE ROOM ---
             if event_type == "create_room":
-                username = data["username"]
                 room_id, display_name = create_room(player_id, username)
 
                 await send(ws, {
@@ -100,13 +125,12 @@ async def websocket_endpoint(ws: WebSocket):
                     "roomId": room_id,
                     "displayName": display_name,
                     "isHost": True,
-                    "room": rooms[room_id]
+                    "room": rooms[room_id]   # now full room data
                 })
 
 
             # --- JOIN ROOM ---
             elif event_type == "join_room":
-                username = data["username"]
                 room_id = data["roomId"]
 
                 if room_id not in rooms:

@@ -13,7 +13,7 @@ import Foundation
 // Needs expansion to enable proper live-time functionality
 struct Room: Identifiable, Codable {
     var id: String
-    var hostId: String
+    var hostId: String // linked to id of Player that is host
     var players: [Player]
     var state: GameState = .lobby
     var currentRound: Int = 0

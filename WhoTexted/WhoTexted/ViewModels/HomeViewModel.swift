@@ -9,9 +9,9 @@ import Foundation
 import Combine
 
 class HomeViewModel: ObservableObject {
-    @Published var username: String = ""
-    @Published var roomCode: String = ""
-    @Published var player: Player?
+    @Published var username: String = "" // needs to be filled out by user
+    @Published var roomCode: String = "" // only needs to be filled out to join a room
+    @Published var player: Player? // player is assigned when player attempts to create room or join room
     @Published var canEnterRoom: Bool = false
     
     private var cancellable: AnyCancellable?
@@ -44,7 +44,10 @@ class HomeViewModel: ObservableObject {
     }
     
     private func handleServerResponse(_ data: Data) {
+        print("[HomeVM] RAW:", String(data: data, encoding: .utf8) ?? "nil")
+        
         if let response = try? JSONDecoder().decode(RoomJoinedResponse.self, from: data) {
+            
             self.player = Player(
                 id: response.playerId,
                 username: username,
@@ -52,7 +55,13 @@ class HomeViewModel: ObservableObject {
                 isHost: response.isHost
             )
             
-            self.canEnterRoom = true
+            DispatchQueue.main.async {
+                self.canEnterRoom = true
+            }
+            
+            return
         }
+        
+        print("[HomeVM] Failed to decode response")
     }
 }

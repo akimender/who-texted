@@ -2,67 +2,121 @@
 //  WebSocketManager.swift
 //  WhoTexted
 //
-//  Created by Andrew Kim on 11/29/25.
-//
 
 import Foundation
 
-class WebSocketManager: ObservableObject {
+class WebSocketManager: NSObject, ObservableObject, URLSessionWebSocketDelegate {
     static let shared = WebSocketManager()
 
-    @Published var isConnected = false
-    private var webSocketTask: URLSessionWebSocketTask?
+    @Published var isConnected = false // tracks whether websocket connection is open or closed (changes will update views)
+    private var webSocketTask: URLSessionWebSocketTask? // actual websocket connection to be used - assigned by connect()
 
-    private init() {}
+    private override init() {}
 
+    // MARK: - CONNECT
     func connect() {
-        let url = URL(string: "ws://YOUR-SERVER-URL/ws")!   // replace with backend URL
-        webSocketTask = URLSession.shared.webSocketTask(with: url)
+        guard webSocketTask == nil else { return }
+
+        let url = URL(string: "ws://localhost:8000/ws")!
+
+        let session = URLSession(
+            configuration: .default,
+            delegate: self,
+            delegateQueue: OperationQueue()
+        )
+
+        webSocketTask = session.webSocketTask(with: url) // start connection handshake with server via url
         webSocketTask?.resume()
 
-        listen()
-        isConnected = true
+        print("[WS] Connecting to \(url.absoluteString)")
+        listen() // start the receive loop
     }
 
+    // MARK: - DISCONNECT
     func disconnect() {
-        webSocketTask?.cancel(with: .goingAway, reason: nil)
+        webSocketTask?.cancel(with: .goingAway, reason: nil) // stops the websocket task
+        webSocketTask = nil
         isConnected = false
+        print("[WS] Disconnected")
     }
 
+    // MARK: - SEND
     func send<T: Codable>(_ message: T) {
-        guard let data = try? JSONEncoder().encode(message) else { return }
-        let wsMessage = URLSessionWebSocketTask.Message.data(data)
-        webSocketTask?.send(wsMessage) { error in
+        guard isConnected else {
+            print("[WS] Cannot send, socket not connected")
+            return
+        }
+
+        guard let webSocketTask else { return }
+        guard let data = try? JSONEncoder().encode(message) else {
+            print("[WS] Failed to encode message")
+            return
+        }
+
+        webSocketTask.send(.string(String(data: data, encoding: .utf8)!)) { error in
             if let error = error {
-                print("WS send error: \(error)")
+                print("[WS] Send error:", error)
             }
         }
     }
 
+    // MARK: - LISTEN LOOP
     private func listen() {
-        webSocketTask?.receive { [weak self] result in
+        guard let webSocketTask else { return }
+
+        webSocketTask.receive { [weak self] result in
+            guard let self else { return }
+
             switch result {
             case .failure(let error):
-                print("WS receive error: \(error)")
+                print("[WS] Receive error:", error)
+                self.isConnected = false
+
             case .success(let message):
+                print("[WS] Received:", message)
+
                 switch message {
                 case .data(let data):
                     NotificationCenter.default.post(
                         name: .webSocketDidReceiveData,
                         object: data
                     )
+
                 case .string(let text):
-                    guard let data = text.data(using: .utf8) else { break }
-                    NotificationCenter.default.post(
-                        name: .webSocketDidReceiveData,
-                        object: data
-                    )
-                @unknown default:
+                    if let data = text.data(using: .utf8) {
+                        NotificationCenter.default.post(
+                            name: .webSocketDidReceiveData,
+                            object: data
+                        )
+                    }
+
+                default:
                     break
                 }
             }
 
-            self?.listen()
+            // keep listening forever
+            self.listen()
+        }
+    }
+
+    // MARK: - DELEGATE (DETECT CONNECTION OPEN)
+    func urlSession(_ session: URLSession,
+                    webSocketTask: URLSessionWebSocketTask,
+                    didOpenWithProtocol protocol: String?) {
+        print("[WS] Connected!")
+        DispatchQueue.main.async {
+            self.isConnected = true
+        }
+    }
+
+    func urlSession(_ session: URLSession,
+                    webSocketTask: URLSessionWebSocketTask,
+                    didCloseWith closeCode: URLSessionWebSocketTask.CloseCode,
+                    reason: Data?) {
+        print("[WS] Connection closed")
+        DispatchQueue.main.async {
+            self.isConnected = false
         }
     }
 }

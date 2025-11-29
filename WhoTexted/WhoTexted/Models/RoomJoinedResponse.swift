@@ -8,10 +8,10 @@
 import Foundation
 
 struct RoomJoinedResponse: Codable {
-    let type: String                 // "room_joined"
-    let playerId: String             // assigned server-side
+    let type: String // "room_joined"
+    let playerId: String // assigned server-side
     let roomId: String
     let isHost: Bool
-    let displayName: String          // server-assigned anonymous name
-    let room: Room                   // full room state after join
+    let displayName: String // server-assigned anonymous name
+    let room: Room // full room state after join
 }
