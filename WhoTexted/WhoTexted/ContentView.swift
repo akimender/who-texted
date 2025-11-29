@@ -2,20 +2,15 @@
 //  ContentView.swift
 //  WhoTexted
 //
-//  Created by Andrew Kim on 11/27/25.
+//  Created by Andrew Kim on 11/29/25.
 //
 
+import Foundation
 import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
-        }
-        .padding()
+        HomeView()
     }
 }
 

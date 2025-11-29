@@ -8,12 +8,33 @@
 
 /* Begin PBXBuildFile section */
 		871740472ED9610500161FC0 /* WhoTextedApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 871740462ED9610500161FC0 /* WhoTextedApp.swift */; };
-		871740492ED9610500161FC0 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 871740482ED9610500161FC0 /* ContentView.swift */; };
 		8717404B2ED9610600161FC0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8717404A2ED9610600161FC0 /* Assets.xcassets */; };
 		8717404E2ED9610600161FC0 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8717404D2ED9610600161FC0 /* Preview Assets.xcassets */; };
 		871740582ED9610600161FC0 /* WhoTextedTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 871740572ED9610600161FC0 /* WhoTextedTests.swift */; };
 		871740622ED9610600161FC0 /* WhoTextedUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 871740612ED9610600161FC0 /* WhoTextedUITests.swift */; };
 		871740642ED9610600161FC0 /* WhoTextedUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 871740632ED9610600161FC0 /* WhoTextedUITestsLaunchTests.swift */; };
+		871740782EDAB2A100161FC0 /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = 871740772EDAB2A100161FC0 /* Player.swift */; };
+		8717407B2EDAB2CE00161FC0 /* Room.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8717407A2EDAB2CE00161FC0 /* Room.swift */; };
+		8717407D2EDAB2D600161FC0 /* Prompt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8717407C2EDAB2D600161FC0 /* Prompt.swift */; };
+		8717407F2EDAB2DF00161FC0 /* ChatMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8717407E2EDAB2DF00161FC0 /* ChatMessage.swift */; };
+		871740812EDAB2E800161FC0 /* GameState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 871740802EDAB2E800161FC0 /* GameState.swift */; };
+		871740882EDAB57A00161FC0 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 871740872EDAB57A00161FC0 /* HomeView.swift */; };
+		8717408A2EDAB59600161FC0 /* LobbyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 871740892EDAB59600161FC0 /* LobbyView.swift */; };
+		8717408C2EDAB5A900161FC0 /* GameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8717408B2EDAB5A900161FC0 /* GameView.swift */; };
+		871740902EDAB5D000161FC0 /* PromptCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8717408F2EDAB5D000161FC0 /* PromptCard.swift */; };
+		871740922EDAB5E200161FC0 /* ChatBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = 871740912EDAB5E200161FC0 /* ChatBubble.swift */; };
+		871740942EDAB5F100161FC0 /* ChatScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 871740932EDAB5F100161FC0 /* ChatScrollView.swift */; };
+		871740962EDAB60D00161FC0 /* MessageInputBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 871740952EDAB60D00161FC0 /* MessageInputBar.swift */; };
+		87FA55352EDB775700A32E1C /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87FA55342EDB775700A32E1C /* HomeViewModel.swift */; };
+		87FA55372EDB777A00A32E1C /* LobbyViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87FA55362EDB777A00A32E1C /* LobbyViewModel.swift */; };
+		87FA55392EDB78A600A32E1C /* GameViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87FA55382EDB78A600A32E1C /* GameViewModel.swift */; };
+		87FA553B2EDB799D00A32E1C /* WebSocketManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87FA553A2EDB799D00A32E1C /* WebSocketManager.swift */; };
+		87FA553D2EDB79BB00A32E1C /* ChatService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87FA553C2EDB79BB00A32E1C /* ChatService.swift */; };
+		87FA553F2EDB7ACA00A32E1C /* BackendService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87FA553E2EDB7ACA00A32E1C /* BackendService.swift */; };
+		87FA55412EDB7ADC00A32E1C /* RoomService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87FA55402EDB7ADC00A32E1C /* RoomService.swift */; };
+		87FA55432EDB7AFE00A32E1C /* AnimalNameGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87FA55422EDB7AFE00A32E1C /* AnimalNameGenerator.swift */; };
+		87FA55452EDB8C5000A32E1C /* RoomJoinedResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87FA55442EDB8C5000A32E1C /* RoomJoinedResponse.swift */; };
+		87FA55472EDB8E0300A32E1C /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87FA55462EDB8E0300A32E1C /* ContentView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -36,7 +57,6 @@
 /* Begin PBXFileReference section */
 		871740432ED9610500161FC0 /* WhoTexted.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WhoTexted.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		871740462ED9610500161FC0 /* WhoTextedApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhoTextedApp.swift; sourceTree = "<group>"; };
-		871740482ED9610500161FC0 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		8717404A2ED9610600161FC0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8717404D2ED9610600161FC0 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		871740532ED9610600161FC0 /* WhoTextedTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WhoTextedTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -44,6 +64,28 @@
 		8717405D2ED9610600161FC0 /* WhoTextedUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WhoTextedUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		871740612ED9610600161FC0 /* WhoTextedUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhoTextedUITests.swift; sourceTree = "<group>"; };
 		871740632ED9610600161FC0 /* WhoTextedUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhoTextedUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		871740772EDAB2A100161FC0 /* Player.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Player.swift; sourceTree = "<group>"; };
+		8717407A2EDAB2CE00161FC0 /* Room.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Room.swift; sourceTree = "<group>"; };
+		8717407C2EDAB2D600161FC0 /* Prompt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Prompt.swift; sourceTree = "<group>"; };
+		8717407E2EDAB2DF00161FC0 /* ChatMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessage.swift; sourceTree = "<group>"; };
+		871740802EDAB2E800161FC0 /* GameState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameState.swift; sourceTree = "<group>"; };
+		871740872EDAB57A00161FC0 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		871740892EDAB59600161FC0 /* LobbyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LobbyView.swift; sourceTree = "<group>"; };
+		8717408B2EDAB5A900161FC0 /* GameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameView.swift; sourceTree = "<group>"; };
+		8717408F2EDAB5D000161FC0 /* PromptCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromptCard.swift; sourceTree = "<group>"; };
+		871740912EDAB5E200161FC0 /* ChatBubble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatBubble.swift; sourceTree = "<group>"; };
+		871740932EDAB5F100161FC0 /* ChatScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatScrollView.swift; sourceTree = "<group>"; };
+		871740952EDAB60D00161FC0 /* MessageInputBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageInputBar.swift; sourceTree = "<group>"; };
+		87FA55342EDB775700A32E1C /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
+		87FA55362EDB777A00A32E1C /* LobbyViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LobbyViewModel.swift; sourceTree = "<group>"; };
+		87FA55382EDB78A600A32E1C /* GameViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewModel.swift; sourceTree = "<group>"; };
+		87FA553A2EDB799D00A32E1C /* WebSocketManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketManager.swift; sourceTree = "<group>"; };
+		87FA553C2EDB79BB00A32E1C /* ChatService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatService.swift; sourceTree = "<group>"; };
+		87FA553E2EDB7ACA00A32E1C /* BackendService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendService.swift; sourceTree = "<group>"; };
+		87FA55402EDB7ADC00A32E1C /* RoomService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomService.swift; sourceTree = "<group>"; };
+		87FA55422EDB7AFE00A32E1C /* AnimalNameGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimalNameGenerator.swift; sourceTree = "<group>"; };
+		87FA55442EDB8C5000A32E1C /* RoomJoinedResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomJoinedResponse.swift; sourceTree = "<group>"; };
+		87FA55462EDB8E0300A32E1C /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -94,10 +136,17 @@
 		871740452ED9610500161FC0 /* WhoTexted */ = {
 			isa = PBXGroup;
 			children = (
+				871740762EDAB27E00161FC0 /* Resources */,
+				871740752EDAB25100161FC0 /* Utilities */,
+				871740742EDAB24900161FC0 /* Networking */,
+				871740732EDAB24500161FC0 /* Services */,
+				871740722EDAB23700161FC0 /* Views */,
+				871740712EDAB23300161FC0 /* ViewModels */,
+				871740702EDAB22D00161FC0 /* Models */,
 				871740462ED9610500161FC0 /* WhoTextedApp.swift */,
-				871740482ED9610500161FC0 /* ContentView.swift */,
 				8717404A2ED9610600161FC0 /* Assets.xcassets */,
 				8717404C2ED9610600161FC0 /* Preview Content */,
+				87FA55462EDB8E0300A32E1C /* ContentView.swift */,
 			);
 			path = WhoTexted;
 			sourceTree = "<group>";
@@ -125,6 +174,116 @@
 				871740632ED9610600161FC0 /* WhoTextedUITestsLaunchTests.swift */,
 			);
 			path = WhoTextedUITests;
+			sourceTree = "<group>";
+		};
+		871740702EDAB22D00161FC0 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				871740772EDAB2A100161FC0 /* Player.swift */,
+				8717407A2EDAB2CE00161FC0 /* Room.swift */,
+				8717407C2EDAB2D600161FC0 /* Prompt.swift */,
+				8717407E2EDAB2DF00161FC0 /* ChatMessage.swift */,
+				871740802EDAB2E800161FC0 /* GameState.swift */,
+				87FA55442EDB8C5000A32E1C /* RoomJoinedResponse.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		871740712EDAB23300161FC0 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				87FA55342EDB775700A32E1C /* HomeViewModel.swift */,
+				87FA55362EDB777A00A32E1C /* LobbyViewModel.swift */,
+				87FA55382EDB78A600A32E1C /* GameViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		871740722EDAB23700161FC0 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				871740862EDAB31E00161FC0 /* Shared */,
+				871740852EDAB31700161FC0 /* EndGame */,
+				871740842EDAB31200161FC0 /* Game */,
+				871740832EDAB30E00161FC0 /* Lobby */,
+				871740822EDAB30900161FC0 /* Home */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		871740732EDAB24500161FC0 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				87FA553C2EDB79BB00A32E1C /* ChatService.swift */,
+				87FA553E2EDB7ACA00A32E1C /* BackendService.swift */,
+				87FA55402EDB7ADC00A32E1C /* RoomService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		871740742EDAB24900161FC0 /* Networking */ = {
+			isa = PBXGroup;
+			children = (
+				87FA553A2EDB799D00A32E1C /* WebSocketManager.swift */,
+			);
+			path = Networking;
+			sourceTree = "<group>";
+		};
+		871740752EDAB25100161FC0 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				87FA55422EDB7AFE00A32E1C /* AnimalNameGenerator.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		871740762EDAB27E00161FC0 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		871740822EDAB30900161FC0 /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				871740872EDAB57A00161FC0 /* HomeView.swift */,
+			);
+			path = Home;
+			sourceTree = "<group>";
+		};
+		871740832EDAB30E00161FC0 /* Lobby */ = {
+			isa = PBXGroup;
+			children = (
+				871740892EDAB59600161FC0 /* LobbyView.swift */,
+			);
+			path = Lobby;
+			sourceTree = "<group>";
+		};
+		871740842EDAB31200161FC0 /* Game */ = {
+			isa = PBXGroup;
+			children = (
+				8717408B2EDAB5A900161FC0 /* GameView.swift */,
+				8717408F2EDAB5D000161FC0 /* PromptCard.swift */,
+				871740912EDAB5E200161FC0 /* ChatBubble.swift */,
+				871740932EDAB5F100161FC0 /* ChatScrollView.swift */,
+				871740952EDAB60D00161FC0 /* MessageInputBar.swift */,
+			);
+			path = Game;
+			sourceTree = "<group>";
+		};
+		871740852EDAB31700161FC0 /* EndGame */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = EndGame;
+			sourceTree = "<group>";
+		};
+		871740862EDAB31E00161FC0 /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Shared;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -257,8 +416,29 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				871740492ED9610500161FC0 /* ContentView.swift in Sources */,
+				871740812EDAB2E800161FC0 /* GameState.swift in Sources */,
+				871740942EDAB5F100161FC0 /* ChatScrollView.swift in Sources */,
+				87FA55432EDB7AFE00A32E1C /* AnimalNameGenerator.swift in Sources */,
+				87FA55372EDB777A00A32E1C /* LobbyViewModel.swift in Sources */,
+				8717408A2EDAB59600161FC0 /* LobbyView.swift in Sources */,
+				871740782EDAB2A100161FC0 /* Player.swift in Sources */,
+				87FA553D2EDB79BB00A32E1C /* ChatService.swift in Sources */,
+				8717408C2EDAB5A900161FC0 /* GameView.swift in Sources */,
+				87FA55452EDB8C5000A32E1C /* RoomJoinedResponse.swift in Sources */,
+				87FA55392EDB78A600A32E1C /* GameViewModel.swift in Sources */,
+				8717407B2EDAB2CE00161FC0 /* Room.swift in Sources */,
+				8717407F2EDAB2DF00161FC0 /* ChatMessage.swift in Sources */,
+				871740922EDAB5E200161FC0 /* ChatBubble.swift in Sources */,
+				871740882EDAB57A00161FC0 /* HomeView.swift in Sources */,
+				871740962EDAB60D00161FC0 /* MessageInputBar.swift in Sources */,
 				871740472ED9610500161FC0 /* WhoTextedApp.swift in Sources */,
+				87FA55412EDB7ADC00A32E1C /* RoomService.swift in Sources */,
+				87FA55472EDB8E0300A32E1C /* ContentView.swift in Sources */,
+				87FA553B2EDB799D00A32E1C /* WebSocketManager.swift in Sources */,
+				8717407D2EDAB2D600161FC0 /* Prompt.swift in Sources */,
+				87FA553F2EDB7ACA00A32E1C /* BackendService.swift in Sources */,
+				87FA55352EDB775700A32E1C /* HomeViewModel.swift in Sources */,
+				871740902EDAB5D000161FC0 /* PromptCard.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
