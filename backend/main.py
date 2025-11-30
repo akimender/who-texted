@@ -32,12 +32,10 @@ async def send(ws: WebSocket, payload: dict):
     await ws.send_json(payload)
 
 
-async def broadcast(room_id: str, payload: dict, exclude_player_id=None):
+async def broadcast(room_id: str, payload: dict):
     """Send JSON to all players in a room."""
     for player in rooms[room_id]["players"]:
         pid = player["id"]
-        if pid == exclude_player_id:
-            continue
         ws = connections.get(pid)
         if ws:
             await ws.send_json(payload)
@@ -128,6 +126,11 @@ async def websocket_endpoint(ws: WebSocket):
                     "room": rooms[room_id]   # now full room data
                 })
 
+                await broadcast(room_id, {
+                    "type": "room_update",
+                    "room": rooms[room_id]
+                })
+
 
             # --- JOIN ROOM ---
             elif event_type == "join_room":
@@ -152,11 +155,11 @@ async def websocket_endpoint(ws: WebSocket):
                     "room": room
                 })
 
-                # Broadcast updated room to others
+                # Broadcast updated room to everyone
                 await broadcast(room_id, {
                     "type": "room_update",
                     "room": room
-                }, exclude_player_id=player_id)
+                })
 
             # --- SEND MESSAGE ---
             elif event_type == "send_message":
