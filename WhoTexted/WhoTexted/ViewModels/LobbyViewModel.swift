@@ -23,9 +23,22 @@ class LobbyViewModel: ObservableObject {
     }
 
     private func handleData(_ data: Data) {
-        if let room = try? JSONDecoder().decode(Room.self, from: data) {
-            self.room = room
-            self.players = room.players
+        print("[LobbyView] Raw:", String(data: data, encoding: .utf8)!)
+        
+        if let envelope = try? JSONDecoder().decode(SocketEnvelope.self, from: data) {
+            print("[LobbyView] Envelope:", envelope)
+            
+            switch envelope.type {
+            case "room_joined", "room_update": // may need to separate cases
+                if let room = envelope.room {
+                    DispatchQueue.main.async {
+                        self.room = room
+                        self.players = room.players
+                    }
+                }
+            default:
+                break
+            }
         }
     }
 }

@@ -2,33 +2,38 @@
 //  GameView.swift
 //  WhoTexted
 //
-//  Created by Andrew Kim on 11/29/25.
-//
 
 import Foundation
 import SwiftUI
 
 struct GameView: View {
     let player: Player
-    @StateObject var vm = GameViewModel()
+    @StateObject private var vm = GameViewModel()
     @State private var messageText = ""
 
     var body: some View {
-        VStack {
+        VStack(spacing: 16) {
+
+            // Prompt
             if let prompt = vm.prompt {
                 PromptCard(prompt: prompt)
+            } else {
+                Text("Waiting for prompt...")
+                    .font(.headline)
+                    .foregroundColor(.gray)
             }
 
+            // Messages
             ChatScrollView(messages: vm.messages, currentPlayer: player)
 
+            // Input bar
             MessageInputBar(text: $messageText) {
                 vm.sendMessage(text: messageText, sender: player)
                 messageText = ""
             }
         }
         .padding()
-        .onAppear {
-            vm.startTimer()
-        }
+        .navigationTitle("Round \(vm.room?.currentRound ?? 1)")
+        .navigationBarTitleDisplayMode(.inline)
     }
 }

@@ -25,36 +25,41 @@ class GameViewModel: ObservableObject {
             }
     }
 
-    func handleData(_ data: Data) {
-        if let incomingMessage = try? JSONDecoder().decode(ChatMessage.self, from: data) {
-            messages.append(incomingMessage)
-            return
-        }
+    private func handleData(_ data: Data) {
+        // Decode envelope first
+        if let envelope = try? JSONDecoder().decode(SocketEnvelope.self, from: data) {
 
-        if let room = try? JSONDecoder().decode(Room.self, from: data) {
-            self.room = room
-            self.prompt = room.currentPrompt
-        }
-    }
+            switch envelope.type {
 
-    func startTimer() {
-        timeRemaining = 10
-        timer?.invalidate()
-        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { t in
-            self.timeRemaining -= 1
-            if self.timeRemaining <= 0 {
-                t.invalidate()
+            case "chat_message":
+                if let message = decodeMessage(from: data) {
+                    DispatchQueue.main.async {
+                        self.messages.append(message)
+                    }
+                }
+
+            case "room_update", "room_joined":
+                if let room = envelope.room {
+                    DispatchQueue.main.async {
+                        self.room = room
+                        self.prompt = room.currentPrompt
+                    }
+                }
+
+            default:
+                break
             }
         }
     }
 
+    private func decodeMessage(from data: Data) -> ChatMessage? {
+        return try? JSONDecoder().decode(ChatMessage.self, from: data)
+    }
+
     func sendMessage(text: String, sender: Player) {
         guard let room = room else { return }
-        guard let displayName = sender.displayName else {
-            print("Error: sender has no displayName yet")
-            return
-        }
-        
+        guard let displayName = sender.displayName else { return }
+
         let msg = ChatMessage(senderId: sender.id, senderDisplayName: displayName, text: text)
         ChatService.shared.sendMessage(roomId: room.id, message: msg)
     }
