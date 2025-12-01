@@ -1,14 +1,17 @@
 from fastapi import WebSocketDisconnect
 import uuid
-import json
 
+from models import (
+    Room, Player,
+    RoomJoinedResponse, RoomUpdateResponse, ChatMessageResponse
+)
+from handlers import parse_message
 from helpers import send, broadcast, create_room, join_room
 
 async def handle_websocket(ws, rooms, connections):
     await ws.accept()
-
     player_id = str(uuid.uuid4())
-    connections[player_id] = ws # maps player id to websocket
+    connections[player_id] = ws
 
     print("Client connected:", player_id)
 
@@ -20,87 +23,102 @@ async def handle_websocket(ws, rooms, connections):
                 break
 
             raw = message.get("text")
-            if raw is None:
+            if not raw:
                 continue
 
-            try:
-                data = json.loads(raw)
-            except json.JSONDecodeError:
-                continue
+            request = parse_message(raw) # pydantic
 
-            event_type = data.get("type")
-            username = data.get("username")
-            if not event_type:
-                continue
+            # ---- Routing by type ----
+            match request.type:
 
-            print(f"event_type: {event_type}, username: {username}")
+                case "create_room":
+                    room_id, display_name = create_room(rooms, player_id, request.username)
 
-            # --- CREATE ROOM ---
-            if event_type == "create_room":
-                room_id, display_name = create_room(rooms, player_id, username)
+                    response = RoomJoinedResponse(
+                        playerId=player_id,
+                        roomId=room_id,
+                        displayName=display_name,
+                        isHost=True,
+                        room=rooms[room_id]
+                    )
+                    await send(ws, response.model_dump())
 
-                await send(ws, {
-                    "type": "room_joined",
-                    "playerId": player_id,
-                    "roomId": room_id,
-                    "displayName": display_name,
-                    "isHost": True,
-                    "room": rooms[room_id]   # now full room data
-                })
+                    await broadcast(
+                        rooms, connections, room_id,
+                        RoomUpdateResponse(room=rooms[room_id]).model_dump()
+                    )
 
-                await broadcast(rooms=rooms, connections=connections, room_id=room_id, payload={
-                    "type": "room_update",
-                    "room": rooms[room_id]
-                })
+                case "join_room":
+                    room_id = request.roomId
 
+                    if room_id not in rooms:
+                        continue  # Handle errors better later
 
-            # --- JOIN ROOM ---
-            elif event_type == "join_room":
-                room_id = data["roomId"]
+                    display_name, room = join_room(
+                        rooms, player_id, request.username, room_id
+                    )
 
-                if room_id not in rooms:
-                    await send(ws, {
-                        "type": "join_failed",
-                        "reason": "Room does not exist"
-                    })
-                    continue
+                    await send(ws, RoomJoinedResponse(
+                        playerId=player_id,
+                        roomId=room_id,
+                        displayName=display_name,
+                        isHost=False,
+                        room=room
+                    ).model_dump())
 
-                display_name, room = join_room(rooms=rooms, player_id=player_id, username=username, room_id=room_id)
+                    await broadcast(
+                        rooms, connections, room_id,
+                        RoomUpdateResponse(room=room).model_dump()
+                    )
 
-                # Send to the player who joined
-                await send(ws, {
-                    "type": "room_joined",
-                    "playerId": player_id,
-                    "roomId": room_id,
-                    "displayName": display_name,
-                    "isHost": False,
-                    "room": room
-                })
+                case "send_message":
+                    room_id = request.roomId
+                    room = rooms[room_id]
 
-                # Broadcast updated room to everyone
-                await broadcast(rooms=rooms, connections=connections, room_id=room_id, payload={
-                    "type": "room_update",
-                    "room": room
-                })
+                    sender = next(p for p in room.players if p.id == player_id)
 
-            # --- SEND MESSAGE ---
-            elif event_type == "send_message":
-                room_id = data["roomId"]
-                text = data["text"]
+                    payload = ChatMessageResponse(
+                        type="chat_message",
+                        senderId=sender.id,
+                        senderDisplayName=sender.displayName,
+                        text=request.text
+                    ).model_dump()
 
-                # find player's display name
-                room = rooms[room_id]
-                sender = next(p for p in room["players"] if p["id"] == player_id)
+                    await broadcast(rooms, connections, room_id, payload)
 
-                message_payload = {
-                    "type": "chat_message",
-                    "senderId": sender["id"],
-                    "senderDisplayName": sender["displayName"],
-                    "text": text
-                }
+                case "leave_room":
+                    room_id = request.roomId
 
-                await broadcast(rooms=rooms, connections=connections, room_id=room_id, payload=message_payload)
+                    if room_id not in rooms: # check if room_id still exists in rooms
+                        break
+
+                    room = rooms[room_id]
+                    room.players = [p for p in room.players if p.id != player_id] # remove player with specified player_id
+
+                    await broadcast(
+                        rooms,
+                        connections,
+                        room_id,
+                        RoomUpdateResponse(room=room).model_dump(),
+                        exclude_player_id=player_id
+                    )
 
     except WebSocketDisconnect:
         print("Client disconnected:", player_id)
+
+        # Remove player from rooms
+        for room_id, room in rooms.items():
+            if any(p.id == player_id for p in room.players):
+                room.players = [p for p in room.players if p.id != player_id]
+
+                # Broadcast updated room
+                await broadcast(
+                    rooms,
+                    connections,
+                    room_id,
+                    RoomUpdateResponse(room=room).model_dump(),
+                    exclude_player_id=player_id
+                )
+                break
+
         connections.pop(player_id, None)
