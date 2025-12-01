@@ -109,6 +109,29 @@ class WebSocketManager: NSObject, ObservableObject, URLSessionWebSocketDelegate 
             self.isConnected = true
         }
     }
+    
+    func sendDictionary(_ dict: [String: Any]) {
+        print("ATTEMPTING TO SEND DICTIONARY")
+        
+        // Ensure socket connection
+        guard isConnected else {
+            print("[WS] Cannot send, socket not connected")
+            return
+        }
+
+        // Serialize dictionary to JSONObject
+        guard let data = try? JSONSerialization.data(withJSONObject: dict) else {
+            print("[WS] Failed to encode dictionary")
+            return
+        }
+
+        // Send JSONObject to backend
+        webSocketTask?.send(.string(String(data: data, encoding: .utf8)!)) { error in
+            if let error = error {
+                print("[WS] Send error:", error)
+            }
+        }
+    }
 
     func urlSession(_ session: URLSession,
                     webSocketTask: URLSessionWebSocketTask,

@@ -32,6 +32,7 @@ async def broadcast(rooms, connections, room_id: str, payload: dict, exclude_pla
             continue
         ws = connections.get(player.id)
         if ws:
+            print(f"BROADCASTING {payload}")
             await ws.send_json(payload)
 
 

@@ -1,4 +1,4 @@
-from fastapi import WebSocketDisconnect
+from fastapi import WebSocket, WebSocketDisconnect
 import uuid
 
 from models import (
@@ -8,18 +8,19 @@ from models import (
 from handlers import parse_message
 from helpers import send, broadcast, create_room, join_room
 
-async def handle_websocket(ws, rooms, connections):
+async def handle_websocket(ws: WebSocket, rooms: dict, connections: dict):
     await ws.accept()
-    player_id = str(uuid.uuid4())
-    connections[player_id] = ws
+    player_id = str(uuid.uuid4()) # generates a random player_id 
+    connections[player_id] = ws # maps player id to websocket connection
 
     print("Client connected:", player_id)
 
     try:
-        while True:
+        while True: # keeps connection open
             message = await ws.receive()
 
             if message["type"] == "websocket.disconnect":
+                print(f"Disconnecting {player_id}")
                 break
 
             raw = message.get("text")
@@ -28,6 +29,7 @@ async def handle_websocket(ws, rooms, connections):
 
             request = parse_message(raw) # pydantic
 
+            print(f"REQUEST {request.type}")
             # ---- Routing by type ----
             match request.type:
 
@@ -42,11 +44,6 @@ async def handle_websocket(ws, rooms, connections):
                         room=rooms[room_id]
                     )
                     await send(ws, response.model_dump())
-
-                    await broadcast(
-                        rooms, connections, room_id,
-                        RoomUpdateResponse(room=rooms[room_id]).model_dump()
-                    )
 
                 case "join_room":
                     room_id = request.roomId
@@ -67,7 +64,9 @@ async def handle_websocket(ws, rooms, connections):
                     ).model_dump())
 
                     await broadcast(
-                        rooms, connections, room_id,
+                        rooms,
+                        connections,
+                        room_id,
                         RoomUpdateResponse(room=room).model_dump()
                     )
 
@@ -84,7 +83,12 @@ async def handle_websocket(ws, rooms, connections):
                         text=request.text
                     ).model_dump()
 
-                    await broadcast(rooms, connections, room_id, payload)
+                    await broadcast(
+                        rooms,
+                        connections,
+                        room_id,
+                        payload
+                    )
 
                 case "leave_room":
                     room_id = request.roomId
@@ -100,7 +104,7 @@ async def handle_websocket(ws, rooms, connections):
                         connections,
                         room_id,
                         RoomUpdateResponse(room=room).model_dump(),
-                        exclude_player_id=player_id
+                        exclude_player_id=player_id # only send update to existing players
                     )
 
     except WebSocketDisconnect:

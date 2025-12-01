@@ -21,6 +21,25 @@ class LobbyViewModel: ObservableObject {
                 self?.handleData(data)
             }
     }
+    
+    func initialize(room: Room) {
+        self.room = room
+        self.players = room.players
+    }
+    
+    func sendLeaveRoom(player: Player) {
+        print("LEAVING ROOM")
+        guard let room = room else { return }
+        
+        // creates payload to send to backend to remove player (playerId) from room (roomId)
+        let payload: [String: Any] = [
+            "type": "leave_room",
+            "playerId": player.id,
+            "roomId": room.id
+        ]
+        
+        WebSocketManager.shared.sendDictionary(payload)
+    }
 
     private func handleData(_ data: Data) {
         print("[LobbyView] Raw:", String(data: data, encoding: .utf8)!)
