@@ -12,8 +12,8 @@ class HomeViewModel: ObservableObject {
     @Published var username: String = "" // needs to be filled out by user
     @Published var roomCode: String = "" // only needs to be filled out to join a room
     @Published var player: Player? // player is assigned when player attempts to create room or join room
-    @Published var canEnterRoom: Bool = false
-    @Published var room: Room?
+    @Published var canEnterRoom: Bool = false // needs to be true to switch to LobbyView
+    @Published var room: Room? // stores Room information to populate LobbyViewModel
     
     private var cancellable: AnyCancellable?
     

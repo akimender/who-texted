@@ -22,11 +22,12 @@ async def send(ws: WebSocket, payload: dict):
 
 
 async def broadcast(rooms, connections, room_id: str, payload: dict, exclude_player_id=None):
-    room = rooms.get(room_id)
+    room = rooms.get(room_id) # get room information
     if not room:
         print(f"Room {room_id} doesn't exist")
         return
     
+    # send payload to every included player in the room (to update)
     for player in room.players:
         if player.id == exclude_player_id:
             continue
@@ -36,7 +37,7 @@ async def broadcast(rooms, connections, room_id: str, payload: dict, exclude_pla
             await ws.send_json(payload)
 
 
-def create_room(rooms, player_id: str, username: str):
+def initialize_new_room(rooms, player_id: str, username: str):
     room_id = generate_room_code()
     display_name = get_unique_display_name([]) # assign a display name to hosting player
 
