@@ -4,16 +4,21 @@ import random
 from constants import animal_names
 from models import Player, Room
 
+def validate_room_id(request, rooms):
+    room_id = request.roomId
+    if room_id not in rooms:
+        return False
+    return True
+
 def generate_room_code():
     return "".join(random.choice("ABCDEFGHJKMNPQRTUVWXYZ") for _ in range(4))
 
-
 def get_unique_display_name(players):
-    used = {p["displayName"] for p in players}
+    used = {p.displayName for p in players}
     for name in animal_names:
         if name not in used:
             return name
-    return "Player"
+    return "Anonymous"
 
 
 async def send(ws: WebSocket, payload: dict):

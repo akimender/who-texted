@@ -1,12 +1,9 @@
 from fastapi import WebSocket, WebSocketDisconnect
 import uuid
 
-from models import (
-    Room, Player,
-    RoomJoinedResponse, RoomUpdateResponse, ChatMessageResponse
-)
+from sockets import handle_create_room, handle_join_room, handle_send_message, handle_leave_room, handle_disconnect
+from helpers import validate_room_id
 from handlers import parse_message
-from helpers import send, broadcast, initialize_new_room, join_room
 
 async def handle_websocket(ws: WebSocket, rooms: dict, connections: dict):
     await ws.accept()
@@ -35,108 +32,25 @@ async def handle_websocket(ws: WebSocket, rooms: dict, connections: dict):
             match request.type:
 
                 case "create_room":
-                    room_id, display_name = initialize_new_room(rooms, player_id, request.username)
-
-                    response = RoomJoinedResponse(
-                        playerId=player_id,
-                        roomId=room_id,
-                        displayName=display_name,
-                        isHost=True,
-                        room=rooms[room_id]
-                    ).model_dump()
-
-                    await send(ws, response)
+                    handle_create_room(ws, rooms, request, player_id)
 
                 case "join_room":
-                    room_id = request.roomId
-
-                    if room_id not in rooms:
-                        continue  # Handle errors better later
-
-                    display_name, room = join_room(
-                        rooms, player_id, request.username, room_id
-                    )
-
-                    response = RoomJoinedResponse(
-                        playerId=player_id,
-                        roomId=room_id,
-                        displayName=display_name,
-                        isHost=True,
-                        room=rooms[room_id]
-                    ).model_dump()
-
-                    await send(ws, response)
-
-                    payload = RoomUpdateResponse(room=room).model_dump()
-
-                    await broadcast(
-                        rooms=rooms,
-                        connections=connections,
-                        room_id=room_id,
-                        payload=payload
-                    )
-
-                case "send_message":
-                    room_id = request.roomId
-
-                    sender = next(p for p in rooms[room_id].players if p.id == player_id)
-
-                    payload = ChatMessageResponse(
-                        type="chat_message",
-                        senderId=sender.id,
-                        senderDisplayName=sender.displayName,
-                        text=request.text
-                    ).model_dump()
-
-                    await broadcast(
-                        rooms=rooms,
-                        connections=connections,
-                        room_id=room_id,
-                        payload=payload
-                    )
-
-                case "leave_room":
-                    room_id = request.roomId
-
-                    if room_id not in rooms: # check if room_id still exists in rooms
-                        break
-
-                    rooms[room_id].players = [p for p in rooms[room_id].players if p.id != player_id] # remove player with specified player_id
-
-                    # if room has no players, remove the room from rooms
-                    if len(rooms[room_id].players) == 0:
-                        del rooms[room_id]
+                    if not validate_room_id(request, rooms):
                         continue
 
-                    response = RoomUpdateResponse(room=rooms[room_id]).model_dump()
+                    handle_join_room(ws, rooms, connections, request, player_id)
 
-                    await broadcast(
-                        rooms=rooms,
-                        connections=connections,
-                        room_id=room_id,
-                        payload=response,
-                        exclude_player_id=player_id # only send update to existing players
-                    )
+                case "send_message":
+                    handle_send_message(ws, rooms, connections, request, player_id)
+
+                case "leave_room":
+                    if not validate_room_id(request, rooms):
+                        break
+
+                    handle_leave_room(rooms, connections, request, player_id)
 
             print(f"Rooms {rooms}")
             print(f"Connections {connections}")
 
     except WebSocketDisconnect:
-        print("Client disconnected:", player_id)
-
-        # Remove player from rooms
-        for room_id, room in rooms.items():
-            if any(p.id == player_id for p in room.players):
-                room.players = [p for p in room.players if p.id != player_id]
-
-                # Broadcast updated room
-                await broadcast(
-                    rooms,
-                    connections,
-                    room_id,
-                    RoomUpdateResponse(room=room).model_dump(),
-                    exclude_player_id=player_id
-                )
-                break
-
-        connections.pop(player_id, None)
+        handle_disconnect(rooms, connections, player_id)
