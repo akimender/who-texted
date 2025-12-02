@@ -41,14 +41,6 @@ struct HomeView: View {
 
                 Spacer()
             }
-            .navigationDestination(isPresented: $vm.canEnterRoom) {
-                // Player is guaranteed safe here
-                if let player = vm.player, let room = vm.room {
-                    LobbyView(player: player, initialRoom: room)
-                } else {
-                    ProgressView("Loading...")
-                }
-            }
         }
     }
 }

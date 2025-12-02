@@ -57,3 +57,7 @@ class ChatMessageResponse(BaseModel):
     senderId: str
     senderDisplayName: str
     text: str
+
+class GameStartedResponse(BaseModel):
+    type: str = "game_started"
+    room: Room

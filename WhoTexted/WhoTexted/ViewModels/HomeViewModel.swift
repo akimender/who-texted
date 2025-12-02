@@ -11,9 +11,6 @@ import Combine
 class HomeViewModel: ObservableObject {
     @Published var username: String = "" // needs to be filled out by user
     @Published var roomCode: String = "" // only needs to be filled out to join a room
-    @Published var player: Player? // player is assigned when player attempts to create room or join room
-    @Published var canEnterRoom: Bool = false // needs to be true to switch to LobbyView
-    @Published var room: Room? // stores Room information to populate LobbyViewModel
     
     private var cancellable: AnyCancellable?
     
@@ -68,26 +65,20 @@ class HomeViewModel: ObservableObject {
     private func handleRoomJoined(_ envelope: SocketEnvelope) {
         guard
             let playerId = envelope.playerId,
-            let roomId = envelope.roomId,
+            let room = envelope.room,
             let displayName = envelope.displayName,
             let isHost = envelope.isHost
         else { return }
         
-        self.room = room
-
-        self.player = Player(
+        let player = Player(
             id: playerId,
             username: username,
             displayName: displayName,
             isHost: isHost
         )
-        
-        if let room = envelope.room {
-            self.room = room
-        }
 
         DispatchQueue.main.async {
-            self.canEnterRoom = true
+            AppState.shared.screen = .lobby(room: room, player: player)
         }
     }
 }

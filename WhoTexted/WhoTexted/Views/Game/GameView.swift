@@ -8,6 +8,7 @@ import SwiftUI
 
 struct GameView: View {
     let player: Player
+    @State private var room: Room
     @StateObject private var vm = GameViewModel()
     @State private var messageText = ""
 

@@ -1,7 +1,7 @@
 import random
 
 from models import (
-    RoomJoinedResponse, RoomUpdateResponse, ChatMessageResponse
+    RoomJoinedResponse, RoomUpdateResponse, ChatMessageResponse, GameStartedResponse
 )
 
 from helpers import send, broadcast, initialize_new_room, join_room
@@ -43,6 +43,17 @@ async def handle_join_room(ws, rooms, connections, request, player_id):
         connections=connections,
         room_id=room_id,
         payload=payload
+    )
+
+async def handle_start_game(rooms, connections, request):
+    room_id = request.roomId
+    rooms[room_id].state = "game_starting" # temporary for now - need to test joining game together
+    rooms[room_id].currentRound = 1
+
+    response = GameStartedResponse(room=rooms[room_id]).model_dump()
+
+    await broadcast(
+        rooms, connections, room_id, response
     )
 
 async def handle_send_message(rooms, connections, request, player_id):

@@ -1,7 +1,7 @@
 from fastapi import WebSocket, WebSocketDisconnect
 import uuid
 
-from sockets import handle_create_room, handle_join_room, handle_send_message, handle_leave_room, handle_disconnect
+from sockets import handle_create_room, handle_join_room, handle_send_message, handle_leave_room, handle_disconnect, handle_start_game
 from helpers import validate_room_id
 from handlers import parse_message
 
@@ -39,6 +39,9 @@ async def handle_websocket(ws: WebSocket, rooms: dict, connections: dict):
                         continue
 
                     handle_join_room(ws, rooms, connections, request, player_id)
+
+                case "start_game":
+                    handle_start_game(rooms, connections, request)
 
                 case "send_message":
                     handle_send_message(ws, rooms, connections, request, player_id)

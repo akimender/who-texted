@@ -10,7 +10,7 @@ import SwiftUI
 
 struct LobbyView: View {
     let player: Player
-    let initialRoom: Room
+    let room: Room
     @StateObject var vm = LobbyViewModel()
 
     var body: some View {
@@ -18,6 +18,8 @@ struct LobbyView: View {
             Text("Lobby")
                 .font(.title)
                 .padding()
+            
+            Text("Room Code: \(vm.room?.id ?? "")") // room is optional
 
             List(vm.players) { p in
                 HStack {
@@ -27,15 +29,15 @@ struct LobbyView: View {
             }
 
             if player.isHost {
-                NavigationLink("Start Game") {
-                    GameView(player: player)
+                Button("Start game") {
+                    vm.sendStartGame()
                 }
                 .buttonStyle(.borderedProminent)
                 .padding()
             }
         }
         .onAppear{
-            vm.initialize(room: initialRoom)
+            vm.initialize(room: room)
         }
         .onDisappear{
             vm.sendLeaveRoom(player: player) // triggers when players leave lobbyview

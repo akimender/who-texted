@@ -26,6 +26,8 @@
 		871740942EDAB5F100161FC0 /* ChatScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 871740932EDAB5F100161FC0 /* ChatScrollView.swift */; };
 		871740962EDAB60D00161FC0 /* MessageInputBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 871740952EDAB60D00161FC0 /* MessageInputBar.swift */; };
 		87E6BC4A2EDBD9A400537473 /* SocketEnvelope.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87E6BC492EDBD9A400537473 /* SocketEnvelope.swift */; };
+		87F9C3E62EDF98B700D0553F /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87F9C3E52EDF98B700D0553F /* AppState.swift */; };
+		87F9C3E82EDF992D00D0553F /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87F9C3E72EDF992D00D0553F /* RootView.swift */; };
 		87FA55352EDB775700A32E1C /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87FA55342EDB775700A32E1C /* HomeViewModel.swift */; };
 		87FA55372EDB777A00A32E1C /* LobbyViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87FA55362EDB777A00A32E1C /* LobbyViewModel.swift */; };
 		87FA55392EDB78A600A32E1C /* GameViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87FA55382EDB78A600A32E1C /* GameViewModel.swift */; };
@@ -78,6 +80,8 @@
 		871740932EDAB5F100161FC0 /* ChatScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatScrollView.swift; sourceTree = "<group>"; };
 		871740952EDAB60D00161FC0 /* MessageInputBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageInputBar.swift; sourceTree = "<group>"; };
 		87E6BC492EDBD9A400537473 /* SocketEnvelope.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocketEnvelope.swift; sourceTree = "<group>"; };
+		87F9C3E52EDF98B700D0553F /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+		87F9C3E72EDF992D00D0553F /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		87FA55342EDB775700A32E1C /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
 		87FA55362EDB777A00A32E1C /* LobbyViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LobbyViewModel.swift; sourceTree = "<group>"; };
 		87FA55382EDB78A600A32E1C /* GameViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewModel.swift; sourceTree = "<group>"; };
@@ -149,6 +153,8 @@
 				8717404A2ED9610600161FC0 /* Assets.xcassets */,
 				8717404C2ED9610600161FC0 /* Preview Content */,
 				87FA55462EDB8E0300A32E1C /* ContentView.swift */,
+				87F9C3E52EDF98B700D0553F /* AppState.swift */,
+				87F9C3E72EDF992D00D0553F /* RootView.swift */,
 			);
 			path = WhoTexted;
 			sourceTree = "<group>";
@@ -435,11 +441,13 @@
 				871740882EDAB57A00161FC0 /* HomeView.swift in Sources */,
 				87E6BC4A2EDBD9A400537473 /* SocketEnvelope.swift in Sources */,
 				871740962EDAB60D00161FC0 /* MessageInputBar.swift in Sources */,
+				87F9C3E62EDF98B700D0553F /* AppState.swift in Sources */,
 				871740472ED9610500161FC0 /* WhoTextedApp.swift in Sources */,
 				87FA55412EDB7ADC00A32E1C /* RoomService.swift in Sources */,
 				87FA55472EDB8E0300A32E1C /* ContentView.swift in Sources */,
 				87FA553B2EDB799D00A32E1C /* WebSocketManager.swift in Sources */,
 				8717407D2EDAB2D600161FC0 /* Prompt.swift in Sources */,
+				87F9C3E82EDF992D00D0553F /* RootView.swift in Sources */,
 				87FA553F2EDB7ACA00A32E1C /* BackendService.swift in Sources */,
 				87FA55352EDB775700A32E1C /* HomeViewModel.swift in Sources */,
 				871740902EDAB5D000161FC0 /* PromptCard.swift in Sources */,

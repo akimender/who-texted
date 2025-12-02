@@ -11,7 +11,7 @@ import SwiftUI
 struct WhoTextedApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            RootView()
         }
     }
 }
