@@ -15,8 +15,8 @@ enum AppScreen {
 
 class AppState: ObservableObject {
     static let shared = AppState()
-
     @Published var screen: AppScreen = .home
+    var currentPlayerId: String? // save player id locally
 
     private init() {}
 }

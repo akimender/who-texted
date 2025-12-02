@@ -60,7 +60,10 @@ class LobbyViewModel: ObservableObject {
             print("[LobbyView] Envelope:", envelope)
             
             switch envelope.type {
-            case "room_joined", "room_update", "game_starting": // may need to separate cases
+            case "game_starting":
+                handleGameStarting(envelope)
+                
+            case "room_joined", "room_update": // may need to separate cases
                 if let room = envelope.room {
                     DispatchQueue.main.async {
                         self.room = room
@@ -70,6 +73,22 @@ class LobbyViewModel: ObservableObject {
             default:
                 break
             }
+        }
+    }
+    
+    private func handleGameStarting(_ envelope: SocketEnvelope) {
+        guard let room = envelope.room else {
+            print("[LobbyView] Envelope is missing room")
+            return
+        }
+        
+        guard let myPlayer = players.first(where: { $0.id == AppState.shared.currentPlayerId }) else {
+            print("Could not find current player in players list")
+            return
+        }
+        
+        DispatchQueue.main.async {
+            AppState.shared.screen = .game(room: room, player: myPlayer)
         }
     }
 }
