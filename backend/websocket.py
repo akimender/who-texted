@@ -32,25 +32,25 @@ async def handle_websocket(ws: WebSocket, rooms: dict, connections: dict):
             match request.type:
 
                 case "create_room":
-                    handle_create_room(ws, rooms, request, player_id)
+                    await handle_create_room(ws, rooms, request, player_id)
 
                 case "join_room":
                     if not validate_room_id(request, rooms):
                         continue
 
-                    handle_join_room(ws, rooms, connections, request, player_id)
+                    await handle_join_room(ws, rooms, connections, request, player_id)
 
                 case "start_game":
-                    handle_start_game(rooms, connections, request)
+                    await handle_start_game(rooms, connections, request)
 
                 case "send_message":
-                    handle_send_message(ws, rooms, connections, request, player_id)
+                    await handle_send_message(ws, rooms, connections, request, player_id)
 
                 case "leave_room":
                     if not validate_room_id(request, rooms):
                         break
 
-                    handle_leave_room(rooms, connections, request, player_id)
+                    await handle_leave_room(rooms, connections, request, player_id)
 
             print(f"Rooms {rooms}")
             print(f"Connections {connections}")

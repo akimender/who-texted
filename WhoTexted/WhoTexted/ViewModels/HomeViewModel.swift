@@ -50,14 +50,15 @@ class HomeViewModel: ObservableObject {
         }
 
         switch envelope.type {
-        case "room_joined":
-            handleRoomJoined(envelope)
+            case "room_joined":
+                print("[HomeVM] Received room_joined")
+                handleRoomJoined(envelope)
 
-        case "room_update":
-            print("[HomeVM] Ignoring room_update")
+            case "room_update":
+                print("[HomeVM] Ignoring room_update")
 
-        default:
-            print("[HomeVM] Unknown message type:", envelope.type)
+            default:
+                print("[HomeVM] Unknown message type:", envelope.type)
         }
     }
     
@@ -76,7 +77,7 @@ class HomeViewModel: ObservableObject {
             displayName: displayName,
             isHost: isHost
         )
-
+        
         DispatchQueue.main.async {
             AppState.shared.screen = .lobby(room: room, player: player)
         }
