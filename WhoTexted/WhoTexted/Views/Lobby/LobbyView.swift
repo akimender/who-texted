@@ -35,12 +35,16 @@ struct LobbyView: View {
                 .buttonStyle(.borderedProminent)
                 .padding()
             }
+            
+            Button("Leave Room") {
+                vm.sendLeaveRoom(player: player)
+                AppState.shared.screen = .home
+            }
+            .foregroundColor(.red)
+            .padding(.top)
         }
         .onAppear{
             vm.initialize(room: room)
-        }
-        .onDisappear{
-            vm.sendLeaveRoom(player: player) // triggers when players leave lobbyview
         }
     }
 }

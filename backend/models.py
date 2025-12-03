@@ -37,6 +37,9 @@ class SendMessageRequest(BaseWSMessage):
 class LeaveRoomRequest(BaseWSMessage):
     roomId: str
 
+class StartGameRequest(BaseWSMessage):
+    roomId: str
+
 
 # --- Outgoing WebSocket messages (server → client) ---
 

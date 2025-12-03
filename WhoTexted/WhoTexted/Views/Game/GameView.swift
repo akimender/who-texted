@@ -14,6 +14,8 @@ struct GameView: View {
 
     var body: some View {
         VStack(spacing: 16) {
+            
+            Text(player.username)
 
             // Prompt
             if let prompt = vm.prompt {

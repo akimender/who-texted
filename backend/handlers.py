@@ -1,7 +1,7 @@
 import json
 from models import (
     BaseWSMessage, CreateRoomRequest, JoinRoomRequest,
-    SendMessageRequest, LeaveRoomRequest,
+    SendMessageRequest, LeaveRoomRequest, StartGameRequest
 )
 
 def parse_message(raw: str) -> BaseWSMessage:
@@ -13,6 +13,8 @@ def parse_message(raw: str) -> BaseWSMessage:
             return CreateRoomRequest(**data)
         case "join_room":
             return JoinRoomRequest(**data)
+        case "start_game":
+            return StartGameRequest(**data)
         case "send_message":
             return SendMessageRequest(**data)
         case "leave_room":
