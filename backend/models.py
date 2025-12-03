@@ -13,7 +13,7 @@ class Room(BaseModel):
     id: str
     hostId: str
     players: List[Player]
-    state: str = "lobby"
+    state: str = "lobby" # default to lobby
     currentRound: int = 0
     currentPrompt: Optional[str] = None
 

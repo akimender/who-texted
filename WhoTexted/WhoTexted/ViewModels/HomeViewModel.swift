@@ -46,6 +46,7 @@ class HomeViewModel: ObservableObject {
         
         guard let envelope = try? JSONDecoder().decode(SocketEnvelope.self, from: data) else {
             print("[HomeVM] Failed to decode envelope")
+            print("Raw JSON:", String(data: data, encoding: .utf8) ?? "nil")
             return
         }
 

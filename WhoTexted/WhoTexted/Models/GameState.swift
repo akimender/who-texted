@@ -7,11 +7,14 @@
 
 import Foundation
 
-// 4 different stages in a game
-// Lobby -> Playing -> Reveal -> Finished
+
 enum GameState: String, Codable {
     case lobby
-    case playing
+    case setup
+    case prompt
+    case responding
+    case voting
     case reveal
+    case scoring
     case finished
 }
