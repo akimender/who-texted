@@ -11,20 +11,24 @@ import Combine
 class LobbyViewModel: ObservableObject {
     @Published var room: Room?
     @Published var players: [Player] = []
+    var player: Player?
 
     private var cancellable: AnyCancellable?
 
     init() {
+        
         cancellable = NotificationCenter.default.publisher(for: .webSocketDidReceiveData)
             .compactMap { $0.object as? Data }
             .sink { [weak self] data in
-                self?.handleData(data)
+                self?.handleServerResponse(data)
             }
     }
     
-    func initialize(room: Room) {
+    func initialize(room: Room, player: Player) {
         self.room = room
         self.players = room.players
+        
+        self.player = player
     }
     
     func sendLeaveRoom(player: Player) {
@@ -53,14 +57,16 @@ class LobbyViewModel: ObservableObject {
         WebSocketManager.shared.sendDictionary(payload)
     }
 
-    private func handleData(_ data: Data) {
+    private func handleServerResponse(_ data: Data) {
         print("[LobbyView] Raw:", String(data: data, encoding: .utf8)!)
         
-        if let envelope = try? JSONDecoder().decode(SocketEnvelope.self, from: data) {
+        do {
+            let envelope = try JSONDecoder().decode(SocketEnvelope.self, from: data)
+            
             print("[LobbyView] Envelope:", envelope)
             
             switch envelope.type {
-            case "game_starting":
+            case "game_start":
                 handleGameStarting(envelope)
                 
             case "room_joined", "room_update": // may need to separate cases
@@ -73,6 +79,9 @@ class LobbyViewModel: ObservableObject {
             default:
                 break
             }
+        } catch {
+            print("Failed to decode SocketEnvelope:", error)
+            print("Raw JSON:", String(data: data, encoding: .utf8) ?? "nil")
         }
     }
     
@@ -82,13 +91,8 @@ class LobbyViewModel: ObservableObject {
             return
         }
         
-        guard let myPlayer = players.first(where: { $0.id == AppState.shared.currentPlayerId }) else {
-            print("Could not find current player in players list")
-            return
-        }
-        
         DispatchQueue.main.async {
-            AppState.shared.screen = .game(room: room, player: myPlayer)
+            AppState.shared.screen = .game(room: room, player: self.player!)
         }
     }
 }

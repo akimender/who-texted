@@ -78,6 +78,8 @@ class HomeViewModel: ObservableObject {
             isHost: isHost
         )
         
+        AppState.shared.currentPlayerId = playerId // saves the playerId locally
+        
         DispatchQueue.main.async {
             AppState.shared.screen = .lobby(room: room, player: player)
         }

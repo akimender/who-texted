@@ -62,5 +62,5 @@ class ChatMessageResponse(BaseModel):
     text: str
 
 class GameStartedResponse(BaseModel):
-    type: str = "game_started"
+    type: str = "game_start"
     room: Room

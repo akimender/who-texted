@@ -47,7 +47,7 @@ async def handle_join_room(ws, rooms, connections, request, player_id):
 
 async def handle_start_game(rooms, connections, request):
     room_id = request.roomId
-    rooms[room_id].state = "game_starting" # temporary for now - need to test joining game together
+    rooms[room_id].state = "playing" # temporary for now - need to test joining game together
     rooms[room_id].currentRound = 1
 
     response = GameStartedResponse(room=rooms[room_id]).model_dump()

@@ -44,7 +44,7 @@ struct LobbyView: View {
             .padding(.top)
         }
         .onAppear{
-            vm.initialize(room: room)
+            vm.initialize(room: room, player: player)
         }
     }
 }
