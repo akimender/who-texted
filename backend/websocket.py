@@ -1,7 +1,11 @@
 from fastapi import WebSocket, WebSocketDisconnect
 import uuid
 
-from sockets import handle_create_room, handle_join_room, handle_send_message, handle_leave_room, handle_disconnect, handle_start_game
+from sockets import (
+    handle_create_room, handle_join_room, handle_send_message, 
+    handle_leave_room, handle_disconnect, handle_start_game,
+    handle_submit_response, handle_submit_vote, handle_next_round
+)
 from helpers import validate_room_id
 from handlers import parse_message
 
@@ -41,7 +45,7 @@ async def handle_websocket(ws: WebSocket, rooms: dict, connections: dict):
                     await handle_join_room(ws, rooms, connections, request, player_id)
 
                 case "start_game":
-                    await handle_start_game(rooms, connections, request)
+                    await handle_start_game(rooms, connections, request, player_id)
 
                 case "send_message":
                     await handle_send_message(ws, rooms, connections, request, player_id)
@@ -52,8 +56,17 @@ async def handle_websocket(ws: WebSocket, rooms: dict, connections: dict):
 
                     await handle_leave_room(rooms, connections, request, player_id)
 
+                case "submit_response":
+                    await handle_submit_response(rooms, connections, request, player_id)
+
+                case "submit_vote":
+                    await handle_submit_vote(rooms, connections, request, player_id)
+
+                case "next_round":
+                    await handle_next_round(rooms, connections, request, player_id)
+
             print(f"Rooms {rooms}")
             print(f"Connections {connections}")
 
     except WebSocketDisconnect:
-        handle_disconnect(rooms, connections, player_id)
+        await handle_disconnect(rooms, connections, player_id)

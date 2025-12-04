@@ -10,12 +10,14 @@ import Foundation
 // Room model
 // Uniquely identifiable and can store multiple players
 // Tracks current round number and current prompt
-// Needs expansion to enable proper live-time functionality
 struct Room: Identifiable, Codable {
     var id: String
     var hostId: String // linked to id of Player that is host
     var players: [Player]
     var state: GameState = .lobby
     var currentRound: Int = 0
-    var currentPrompt: Prompt?
+    var maxRounds: Int = 5
+    var currentPrompt: String?  // Changed from Prompt? to String? to match backend
+    var currentRoundData: Round?
+    var rounds: [Round] = []
 }

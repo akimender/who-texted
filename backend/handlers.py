@@ -1,7 +1,8 @@
 import json
 from models import (
     BaseWSMessage, CreateRoomRequest, JoinRoomRequest,
-    SendMessageRequest, LeaveRoomRequest, StartGameRequest
+    SendMessageRequest, LeaveRoomRequest, StartGameRequest,
+    SubmitResponseRequest, SubmitVoteRequest, NextRoundRequest
 )
 
 def parse_message(raw: str) -> BaseWSMessage:
@@ -19,5 +20,11 @@ def parse_message(raw: str) -> BaseWSMessage:
             return SendMessageRequest(**data)
         case "leave_room":
             return LeaveRoomRequest(**data)
+        case "submit_response":
+            return SubmitResponseRequest(**data)
+        case "submit_vote":
+            return SubmitVoteRequest(**data)
+        case "next_round":
+            return NextRoundRequest(**data)
         case _:
             raise ValueError(f"Unknown WebSocket event type: {msg_type}")

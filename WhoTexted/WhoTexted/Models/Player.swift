@@ -13,4 +13,5 @@ struct Player: Identifiable, Codable, Equatable {
     var username: String // assigned by user
     var displayName: String? // assigned server-side
     var isHost: Bool = false
+    var points: Int = 0
 }
