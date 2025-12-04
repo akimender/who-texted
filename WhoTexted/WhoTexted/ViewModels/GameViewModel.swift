@@ -82,6 +82,11 @@ class GameViewModel: ObservableObject {
                     if let roundData = room.currentRoundData {
                         self.responses = roundData.responses
                     }
+                    // If room state changed to playing, ensure we have the latest data
+                    if room.state == .playing && room.currentRoundData != nil {
+                        // Room is in game - make sure we're showing the right view
+                        print("[GameVM] Room state is playing, round state: \(room.currentRoundData?.state ?? "none")")
+                    }
                 }
                 
             case "chat_message":

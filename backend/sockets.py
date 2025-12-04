@@ -10,7 +10,7 @@ from models import (
 
 from helpers import (
     send, broadcast, initialize_new_room, join_room,
-    initialize_round, validate_response, process_response,
+    initialize_round, start_new_round, validate_response, process_response,
     check_all_responses_submitted, process_vote, calculate_round_scores,
     check_game_completion, validate_state_transition
 )
@@ -69,78 +69,27 @@ async def handle_start_game(rooms, connections, request, player_id):
         print(f"Need at least 3 players to start game, currently {len(room.players)}")
         return
     
-    # Initialize first round
+    # Set room state to "playing" (per spec)
     room.currentRound = 1
-    room.state = "roundSetup"
+    room.state = "playing"
     
     try:
-        round_data = initialize_round(room, 1)
-        room.currentRoundData = round_data
-        room.currentPrompt = round_data.prompt
+        # Use start_new_round helper (per spec) - this creates round and sends messages
+        await start_new_round(room, rooms, connections)
         
-        # Broadcast room update first so all players know game is starting
+        # Broadcast room update AFTER round is created so all players get complete state
+        # This ensures all players transition from lobby to game view
         initial_update = RoomUpdateResponse(room=room).model_dump()
         await broadcast(rooms, connections, room_id, initial_update)
         
-        # Send round setup to each player with their secret role
-        target_player = next((p for p in room.players if p.id == round_data.targetPlayerId), None)
-        sender_player = next((p for p in room.players if p.id == round_data.promptSenderId), None)
+        # After a delay, transition round to responding state
+        await asyncio.sleep(3)  # Give players time to see prompt
         
-        if not target_player or not sender_player:
-            print(f"Error: Target or sender player not found in room")
-            room.state = "lobby"
-            room.currentRound = 0
-            room.currentRoundData = None
-            return
-        
-        target_name = target_player.displayName or target_player.username
-        sender_name = sender_player.displayName or sender_player.username
-        
-        for player in room.players:
-            if player.id == round_data.targetPlayerId:
-                continue  # Target doesn't respond
-            
-            # Determine player's role
-            if player.id == round_data.realImpersonatorId:
-                role = "real_impersonator"
-            else:
-                role = "fake_responder"
-            
-            ws = connections.get(player.id)
-            if ws:
-                response = RoundSetupResponse(
-                    room=room,
-                    targetPlayerName=target_name,
-                    promptSenderName=sender_name,
-                    yourRole=role
-                ).model_dump()
-                await send(ws, response)
-        
-        # After 3 seconds, transition to prompt display
-        await asyncio.sleep(3)
-        
-        # Transition to prompt state
-        room.state = "prompt"
-        round_data.state = "prompt"
-        
-        # Broadcast prompt display to all players
-        prompt_response = PromptDisplayResponse(
-            room=room,
-            promptText=round_data.prompt,
-            targetPlayerName=target_name
-        ).model_dump()
-        
-        await broadcast(rooms, connections, room_id, prompt_response)
-        
-        # After 2 seconds, transition to responding state
-        await asyncio.sleep(2)
-        
-        room.state = "responding"
-        round_data.state = "responding"
-        
-        # Broadcast state update
-        update_response = RoomUpdateResponse(room=room).model_dump()
-        await broadcast(rooms, connections, room_id, update_response)
+        if room.currentRoundData:
+            room.currentRoundData.state = "responding"
+            # Broadcast state update
+            update_response = RoomUpdateResponse(room=room).model_dump()
+            await broadcast(rooms, connections, room_id, update_response)
         
     except Exception as e:
         print(f"Error starting game: {e}")
@@ -164,7 +113,7 @@ async def handle_send_message(rooms, connections, request, player_id):
     payload = ChatMessageResponse(
         type="chat_message",
         senderId=sender.id,
-        senderDisplayName=sender.displayName,
+        senderDisplayName=sender.displayName or sender.username,  # Fallback to username if displayName is None
         text=request.text
     ).model_dump()
 
@@ -235,14 +184,15 @@ async def handle_submit_response(rooms, connections, request, player_id):
     
     # If all submitted, transition to voting
     if all_submitted:
-        room.state = "voting"
+        # Room.state stays "playing", only Round.state changes
         room.currentRoundData.state = "voting"
         
-        # Create anonymous responses (hide playerId)
+        # Create anonymous responses for voting (hide playerId and isReal status)
+        # Note: Original responses have playerId set, but we create new anonymous copies for voting
         anonymous_responses = [
             Response(
                 id=r.id,
-                playerId=None,  # Hide player ID
+                playerId=None,  # Already None per spec
                 text=r.text,
                 isReal=False,  # Hide real status
                 voteCount=0
@@ -281,13 +231,13 @@ async def handle_submit_vote(rooms, connections, request, player_id):
     
     # If all voted, transition to reveal
     if all_voted:
-        room.state = "reveal"
+        # Room.state stays "playing", only Round.state changes
         room.currentRoundData.state = "reveal"
         
-        # Broadcast reveal phase with all information
+        # Broadcast reveal phase with all information (playerIds already in responses)
         reveal_response = RevealPhaseResponse(
             room=room,
-            responses=room.currentRoundData.responses,  # Full responses with playerId
+            responses=room.currentRoundData.responses,  # playerId already set
             votes=room.currentRoundData.votes
         ).model_dump()
         
@@ -304,8 +254,7 @@ async def handle_submit_vote(rooms, connections, request, player_id):
             if player.id in scores:
                 player.points += scores[player.id]['points_earned']
         
-        # Transition to scoring
-        room.state = "scoring"
+        # Transition to scoring (Room.state stays "playing")
         room.currentRoundData.state = "scoring"
         
         # Create round summary (convert all values to strings for JSON compatibility)
@@ -374,68 +323,24 @@ async def handle_next_round(rooms, connections, request, player_id):
     
     # Start next round
     room.currentRound += 1
+    # Room.state stays "playing"
     
     try:
-        round_data = initialize_round(room, room.currentRound)
-        room.currentRoundData = round_data
-        room.currentPrompt = round_data.prompt
-        room.state = "roundSetup"
+        # Use start_new_round helper (per spec)
+        await start_new_round(room, rooms, connections)
         
-        # Send round setup to each player
-        target_player = next((p for p in room.players if p.id == round_data.targetPlayerId), None)
-        sender_player = next((p for p in room.players if p.id == round_data.promptSenderId), None)
-        
-        if not target_player or not sender_player:
-            print(f"Error: Target or sender player not found in room")
-            room.state = "lobby"
-            room.currentRoundData = None
-            room.currentPrompt = None
-            return
-        
-        target_name = target_player.displayName or target_player.username
-        sender_name = sender_player.displayName or sender_player.username
-        
-        for player in room.players:
-            if player.id == round_data.targetPlayerId:
-                continue
-            
-            if player.id == round_data.realImpersonatorId:
-                role = "real_impersonator"
-            else:
-                role = "fake_responder"
-            
-            ws = connections.get(player.id)
-            if ws:
-                response = RoundSetupResponse(
-                    room=room,
-                    targetPlayerName=target_name,
-                    promptSenderName=sender_name,
-                    yourRole=role
-                ).model_dump()
-                await send(ws, response)
-        
-        # After 3 seconds, transition to prompt
-        await asyncio.sleep(3)
-        
-        room.state = "prompt"
-        round_data.state = "prompt"
-        
-        prompt_response = PromptDisplayResponse(
-            room=room,
-            promptText=round_data.prompt,
-            targetPlayerName=target_name
-        ).model_dump()
-        
-        await broadcast(rooms, connections, room_id, prompt_response)
-        
-        # After 2 seconds, transition to responding
-        await asyncio.sleep(2)
-        
-        room.state = "responding"
-        round_data.state = "responding"
-        
+        # Broadcast room update
         update_response = RoomUpdateResponse(room=room).model_dump()
         await broadcast(rooms, connections, room_id, update_response)
+        
+        # After delay, transition round to responding state
+        await asyncio.sleep(3)  # Give players time to see prompt
+        
+        if room.currentRoundData:
+            room.currentRoundData.state = "responding"
+            # Broadcast state update
+            update_response = RoomUpdateResponse(room=room).model_dump()
+            await broadcast(rooms, connections, room_id, update_response)
         
     except Exception as e:
         print(f"Error starting next round: {e}")

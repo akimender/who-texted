@@ -134,6 +134,57 @@ def assign_round_roles(players: list, target_player_id: str) -> dict:
     }
 
 
+async def start_new_round(room: Room, rooms: dict, connections: dict) -> None:
+    """
+    Starts a new round according to specification:
+    - Creates new Round object
+    - Sends RoundSetupResponse (optional UX enhancement)
+    - Sends PromptDisplayResponse to all players
+    """
+    round_number = room.currentRound
+    round_data = initialize_round(room, round_number)
+    room.currentRoundData = round_data
+    room.currentPrompt = round_data.prompt
+    
+    # Get player names
+    target_player = next((p for p in room.players if p.id == round_data.targetPlayerId), None)
+    sender_player = next((p for p in room.players if p.id == round_data.promptSenderId), None)
+    
+    if not target_player or not sender_player:
+        raise ValueError("Target or sender player not found")
+    
+    target_name = target_player.displayName or target_player.username
+    sender_name = sender_player.displayName or sender_player.username
+    
+    # Send RoundSetupResponse to responding players (UX enhancement - not in spec but useful)
+    from models import RoundSetupResponse
+    for player in room.players:
+        if player.id == round_data.targetPlayerId:
+            continue  # Target doesn't respond
+        
+        role = "real_impersonator" if player.id == round_data.realImpersonatorId else "fake_responder"
+        ws = connections.get(player.id)
+        if ws:
+            response = RoundSetupResponse(
+                room=room,
+                targetPlayerName=target_name,
+                promptSenderName=sender_name,
+                yourRole=role
+            ).model_dump()
+            await send(ws, response)
+    
+    # Send PromptDisplayResponse to all players (spec requirement)
+    from models import PromptDisplayResponse
+    prompt_response = PromptDisplayResponse(
+        room=room,
+        promptText=round_data.prompt,
+        targetPlayerName=target_name
+    ).model_dump()
+    
+    # Broadcast to all players (use room.id as room_id)
+    await broadcast(rooms, connections, room.id, prompt_response)
+
+
 def initialize_round(room: Room, round_number: int) -> Round:
     """
     Initializes a new round:
@@ -192,7 +243,8 @@ def validate_response(room: Room, player_id: str, response_text: str) -> bool:
     if not room.currentRoundData:
         return False
     
-    if room.state != "responding":
+    # Check if round is in responding state (Room.state is "playing" during game)
+    if not room.currentRoundData or room.currentRoundData.state != "responding":
         return False
     
     # Check if player is in room
@@ -225,13 +277,14 @@ def process_response(room: Room, player_id: str, response_text: str) -> Response
     """
     Processes and stores a response submission.
     Returns the created Response object.
+    Note: We store playerId in Response for internal use, but hide it in VotingPhaseResponse
     """
     round_data = room.currentRoundData
     is_real = (player_id == round_data.realImpersonatorId)
     
     response = Response(
         id=str(uuid.uuid4()),
-        playerId=player_id,
+        playerId=player_id,  # Store for reveal/scoring, but hide in voting phase
         text=response_text.strip(),
         isReal=is_real,
         voteCount=0
@@ -250,7 +303,8 @@ def check_all_responses_submitted(room: Room) -> bool:
     
     # All players except target should submit
     expected_responders = [p.id for p in room.players if p.id != room.currentRoundData.targetPlayerId]
-    submitted_ids = {r.playerId for r in room.currentRoundData.responses}
+    # Responses have playerId set (not None) when stored
+    submitted_ids = {r.playerId for r in room.currentRoundData.responses if r.playerId is not None}
     
     return len(expected_responders) == len(submitted_ids) and all(
         pid in submitted_ids for pid in expected_responders
@@ -265,7 +319,8 @@ def process_vote(room: Room, voter_id: str, response_id: str) -> bool:
     if not room.currentRoundData:
         return False
     
-    if room.state != "voting":
+    # Check if round is in voting state (Room.state is "playing" during game)
+    if not room.currentRoundData or room.currentRoundData.state != "voting":
         return False
     
     # Check if voter is the target (target doesn't vote)
@@ -327,11 +382,11 @@ def calculate_round_scores(round_data: Round, players: list) -> dict:
     num_correct = len(correct_guesses)
     num_wrong = len(round_data.votes) - num_correct
     
-    # Real Impersonator scoring
-    # +1 per correct guess, +1 per wrong guess (fooled someone)
-    real_impersonator_points = num_correct + num_wrong
+    # Real Impersonator scoring (per spec)
+    # +2 per correct guess, +1 per fooled guess (wrong guess)
+    real_impersonator_points = (num_correct * 2) + num_wrong
     scores[round_data.realImpersonatorId]['points_earned'] = real_impersonator_points
-    scores[round_data.realImpersonatorId]['reason'] = f"Real response: {num_correct} correct guesses, {num_wrong} fooled"
+    scores[round_data.realImpersonatorId]['reason'] = f"Real response: {num_correct} correct guesses (+{num_correct * 2}), {num_wrong} fooled (+{num_wrong})"
     
     # Fake Responders scoring
     # +1 per vote received
@@ -368,7 +423,8 @@ def check_round_completion(room: Room) -> bool:
     
     # Check responses
     expected_responders = [p.id for p in room.players if p.id != room.currentRoundData.targetPlayerId]
-    submitted_ids = {r.playerId for r in room.currentRoundData.responses}
+    # Responses have playerId set (not None) when stored
+    submitted_ids = {r.playerId for r in room.currentRoundData.responses if r.playerId is not None}
     all_responses_submitted = len(expected_responders) == len(submitted_ids)
     
     # Check votes

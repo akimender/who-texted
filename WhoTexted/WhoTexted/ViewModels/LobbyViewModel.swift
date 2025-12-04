@@ -81,7 +81,7 @@ class LobbyViewModel: ObservableObject {
                             self.room = room
                             self.players = room.players
                         }
-                    } else {
+                    } else if room.state == .playing || room.state == .finished {
                         // Room state changed to game state - transition to game
                         print("[LobbyView] Room state changed to \(room.state.rawValue), transitioning to game")
                         handleGameStarting(envelope)

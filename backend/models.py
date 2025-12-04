@@ -13,7 +13,7 @@ class Player(BaseModel):
 
 class Response(BaseModel):
     id: str
-    playerId: Optional[str] = None  # Secret - only revealed after voting (None during voting phase)
+    playerId: Optional[str] = None  # Stored internally, hidden in VotingPhaseResponse, revealed in RevealPhaseResponse
     text: str
     isReal: bool  # True if from real impersonator
     voteCount: int = 0  # Votes received
