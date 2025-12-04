@@ -83,8 +83,15 @@ class LobbyViewModel: ObservableObject {
                         }
                     } else if room.state == .playing || room.state == .finished {
                         // Room state changed to game state - transition to game
+                        // This handles the case where room_update is sent before round_setup/prompt_display
                         print("[LobbyView] Room state changed to \(room.state.rawValue), transitioning to game")
                         handleGameStarting(envelope)
+                    } else {
+                        // Handle any other state changes
+                        DispatchQueue.main.async {
+                            self.room = room
+                            self.players = room.players
+                        }
                     }
                 }
             default:
