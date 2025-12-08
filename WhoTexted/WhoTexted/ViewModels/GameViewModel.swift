@@ -82,7 +82,7 @@ class GameViewModel: ObservableObject {
                 if let room = envelope.room {
                     self.room = room
                     // Update session model to keep it in sync
-                    session?.updateRoom(room)
+                    self.session?.updateRoom(room)
                     // Update responses if available
                     if let roundData = room.currentRoundData {
                         self.responses = roundData.responses
@@ -204,7 +204,7 @@ class GameViewModel: ObservableObject {
         GameService.shared.submitVote(roomId: room.id, responseId: responseId)
     }
     
-    func nextRound() {
+    @MainActor func nextRound() {
         guard let room = room else { return }
         guard let currentPlayer = session?.currentPlayer else { return }
         guard currentPlayer.isHost else { return }

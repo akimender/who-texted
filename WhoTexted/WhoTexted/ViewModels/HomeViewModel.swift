@@ -8,6 +8,7 @@
 import Foundation
 import Combine
 
+@MainActor
 class HomeViewModel: ObservableObject {
     var router: AppRouter?
     var session: SessionModel?
@@ -44,7 +45,7 @@ class HomeViewModel: ObservableObject {
         WebSocketManager.shared.send(request)
     }
     
-    private func handleServerResponse(_ data: Data) {
+    @MainActor private func handleServerResponse(_ data: Data) {
         print("[HomeVM] RAW:", String(data: data, encoding: .utf8) ?? "nil")
         
         guard let envelope = try? JSONDecoder().decode(SocketEnvelope.self, from: data) else {
@@ -67,7 +68,7 @@ class HomeViewModel: ObservableObject {
     }
     
     // Handles message in RoomJoinedResponse
-    private func handleRoomJoined(_ envelope: SocketEnvelope) {
+    @MainActor private func handleRoomJoined(_ envelope: SocketEnvelope) {
         guard
             let playerId = envelope.playerId,
             let room = envelope.room,

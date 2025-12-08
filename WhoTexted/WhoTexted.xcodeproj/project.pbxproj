@@ -44,7 +44,6 @@
 		8773C2DA2EE1416300EB5D5A /* VotingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8773C2A42EE1416300EB5D5A /* VotingView.swift */; };
 		8773C2DB2EE1416300EB5D5A /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8773C2A62EE1416300EB5D5A /* HomeView.swift */; };
 		8773C2DC2EE1416300EB5D5A /* LobbyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8773C2A82EE1416300EB5D5A /* LobbyView.swift */; };
-		8773C2DD2EE1416300EB5D5A /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8773C2AB2EE1416300EB5D5A /* AppState.swift */; };
 		8773C2DE2EE1416300EB5D5A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8773C2AC2EE1416300EB5D5A /* Assets.xcassets */; };
 		8773C2DF2EE1416300EB5D5A /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8773C2AD2EE1416300EB5D5A /* ContentView.swift */; };
 		8773C2E02EE1416300EB5D5A /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8773C2AE2EE1416300EB5D5A /* RootView.swift */; };
@@ -112,7 +111,6 @@
 		8773C2A42EE1416300EB5D5A /* VotingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VotingView.swift; sourceTree = "<group>"; };
 		8773C2A62EE1416300EB5D5A /* HomeView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		8773C2A82EE1416300EB5D5A /* LobbyView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LobbyView.swift; sourceTree = "<group>"; };
-		8773C2AB2EE1416300EB5D5A /* AppState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		8773C2AC2EE1416300EB5D5A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8773C2AD2EE1416300EB5D5A /* ContentView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		8773C2AE2EE1416300EB5D5A /* RootView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
@@ -296,7 +294,6 @@
 				8773C2942EE1416300EB5D5A /* Utilities */,
 				8773C2982EE1416300EB5D5A /* ViewModels */,
 				8773C2AA2EE1416300EB5D5A /* Views */,
-				8773C2AB2EE1416300EB5D5A /* AppState.swift */,
 				8773C2AC2EE1416300EB5D5A /* Assets.xcassets */,
 				8773C2AD2EE1416300EB5D5A /* ContentView.swift */,
 				8773C2AF2EE1416300EB5D5A /* WhoTextedApp.swift */,
@@ -472,7 +469,6 @@
 				8773C2DF2EE1416300EB5D5A /* ContentView.swift in Sources */,
 				8773C2D72EE1416300EB5D5A /* RevealView.swift in Sources */,
 				8773C2CF2EE1416300EB5D5A /* ChatBubble.swift in Sources */,
-				8773C2DD2EE1416300EB5D5A /* AppState.swift in Sources */,
 				8773C2CA2EE1416300EB5D5A /* RoomService.swift in Sources */,
 				8773C2C22EE1416300EB5D5A /* RoundRole.swift in Sources */,
 				8773C2C42EE1416300EB5D5A /* Vote.swift in Sources */,

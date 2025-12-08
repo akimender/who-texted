@@ -8,6 +8,7 @@
 import Foundation
 import Combine
 
+@MainActor
 class LobbyViewModel: ObservableObject {
     @Published var room: Room?
     @Published var players: [Player] = []
@@ -70,7 +71,7 @@ class LobbyViewModel: ObservableObject {
         WebSocketManager.shared.sendDictionary(payload)
     }
 
-    private func handleServerResponse(_ data: Data) {
+    @MainActor private func handleServerResponse(_ data: Data) {
         print("[LobbyView] Raw:", String(data: data, encoding: .utf8)!)
         
         do {
@@ -115,7 +116,7 @@ class LobbyViewModel: ObservableObject {
         }
     }
     
-    private func handleGameStarting(_ envelope: SocketEnvelope) {
+    @MainActor private func handleGameStarting(_ envelope: SocketEnvelope) {
         guard let room = envelope.room else {
             print("[LobbyView] Envelope is missing room")
             return
