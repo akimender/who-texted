@@ -42,13 +42,20 @@ async def broadcast(rooms, connections, room_id: str, payload: dict, exclude_pla
         return
     
     # send payload to every included player in the room (to update)
+    print(f"[BROADCAST] Sending to room {room_id} with {len(room.players)} players")
+    sent_count = 0
     for player in room.players:
         if player.id == exclude_player_id:
+            print(f"[BROADCAST] Skipping excluded player {player.id}")
             continue
         ws = connections.get(player.id)
         if ws:
-            print(f"BROADCASTING {payload}")
+            print(f"[BROADCAST] Sending to player {player.id} ({player.username})")
             await ws.send_json(payload)
+            sent_count += 1
+        else:
+            print(f"[BROADCAST] WARNING: No WebSocket connection found for player {player.id} ({player.username})")
+    print(f"[BROADCAST] Sent to {sent_count}/{len(room.players)} players")
 
 
 def initialize_new_room(rooms, player_id: str, username: str):
@@ -195,8 +202,8 @@ def initialize_round(room: Room, round_number: int) -> Round:
     """
     players = room.players
     
-    if len(players) < 3:
-        raise ValueError("Need at least 3 players to start a round")
+    # if len(players) < 3:
+    #     raise ValueError("Need at least 3 players to start a round")
     
     # Select target player (round-robin based on round number)
     target_index = (round_number - 1) % len(players)

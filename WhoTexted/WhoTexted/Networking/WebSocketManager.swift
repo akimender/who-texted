@@ -15,7 +15,19 @@ class WebSocketManager: NSObject, ObservableObject, URLSessionWebSocketDelegate 
 
     // MARK: - CONNECT
     func connect() {
-        guard webSocketTask == nil else { return }
+        // If already connected, don't reconnect
+        if isConnected && webSocketTask != nil {
+            print("[WS] Already connected, skipping reconnect")
+            return
+        }
+        
+        // If there's a stale connection, clean it up first
+        if webSocketTask != nil {
+            print("[WS] Cleaning up stale connection before reconnecting")
+            webSocketTask?.cancel(with: .goingAway, reason: nil)
+            webSocketTask = nil
+            isConnected = false
+        }
 
         let url = URL(string: "ws://localhost:8000/ws")!
 

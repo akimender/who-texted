@@ -12,6 +12,8 @@ struct LobbyView: View {
     let player: Player
     let room: Room
     @StateObject var vm = LobbyViewModel()
+    @EnvironmentObject var router: AppRouter
+    @EnvironmentObject var session: SessionModel
 
     var body: some View {
         VStack {
@@ -38,12 +40,23 @@ struct LobbyView: View {
             
             Button("Leave Room") {
                 vm.sendLeaveRoom(player: player)
-                AppState.shared.screen = .home
+                session.clearSession()
+                router.navigateToHome()
             }
             .foregroundColor(.red)
             .padding(.top)
+            
+            // REMOVE (JUST FOR TESTING)
+            if vm.goingToGame {
+                Text("GOING TO GAME")
+            }
+            
+            Text("there should be text above this when the game starts")
+
         }
         .onAppear{
+            vm.router = router
+            vm.session = session
             vm.initialize(room: room, player: player)
         }
     }

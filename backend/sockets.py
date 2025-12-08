@@ -59,6 +59,7 @@ async def handle_start_game(rooms, connections, request, player_id):
     room = rooms[room_id]
     
     # Validate host
+    # May delete because frontend only shows start game button to host anyway
     host = next((p for p in room.players if p.id == player_id), None)
     if not host or not host.isHost:
         print(f"Player {player_id} is not the host, cannot start game")
@@ -73,27 +74,16 @@ async def handle_start_game(rooms, connections, request, player_id):
     room.currentRound = 1
     room.state = "playing"
     
-    try:
-        # Broadcast room update FIRST with state="playing" so ALL players transition immediately
-        # This ensures all players know the game is starting before round-specific messages
-        initial_update = RoomUpdateResponse(room=room).model_dump()
-        await broadcast(rooms, connections, room_id, initial_update)
-        
+    try:        
         # Use start_new_round helper (per spec) - this creates round and sends messages
         await start_new_round(room, rooms, connections)
         
         # Broadcast room update AGAIN after round is created so all players get complete state with round data
-        complete_update = RoomUpdateResponse(room=room).model_dump()
+        complete_update = GameStartedResponse(room=room).model_dump()
         await broadcast(rooms, connections, room_id, complete_update)
         
         # After a delay, transition round to responding state
         await asyncio.sleep(3)  # Give players time to see prompt
-        
-        if room.currentRoundData:
-            room.currentRoundData.state = "responding"
-            # Broadcast state update
-            update_response = RoomUpdateResponse(room=room).model_dump()
-            await broadcast(rooms, connections, room_id, update_response)
         
     except Exception as e:
         print(f"Error starting game: {e}")

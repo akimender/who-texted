@@ -9,6 +9,8 @@ import Foundation
 import Combine
 
 class HomeViewModel: ObservableObject {
+    var router: AppRouter?
+    var session: SessionModel?
     @Published var username: String = "" // needs to be filled out by user
     @Published var roomCode: String = "" // only needs to be filled out to join a room
     
@@ -21,6 +23,7 @@ class HomeViewModel: ObservableObject {
             for: .webSocketDidReceiveData
         )
         .compactMap { $0.object as? Data }
+        .receive(on: DispatchQueue.main)
         .sink { [weak self] data in
             self?.handleServerResponse(data)
         }
@@ -69,7 +72,9 @@ class HomeViewModel: ObservableObject {
             let playerId = envelope.playerId,
             let room = envelope.room,
             let displayName = envelope.displayName,
-            let isHost = envelope.isHost
+            let isHost = envelope.isHost,
+            let router = router,
+            let session = session
         else { return }
         
         let player = Player(
@@ -79,10 +84,11 @@ class HomeViewModel: ObservableObject {
             isHost: isHost
         )
         
-        AppState.shared.currentPlayerId = playerId // saves the playerId locally
+        // Update session with room and player
+        session.updateRoom(room)
+        session.setPlayer(player)
         
-        DispatchQueue.main.async {
-            AppState.shared.screen = .lobby(room: room, player: player)
-        }
+        // Navigate to lobby
+        router.navigateToLobby(roomId: room.id)
     }
 }

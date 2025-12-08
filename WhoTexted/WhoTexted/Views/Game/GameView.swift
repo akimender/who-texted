@@ -9,7 +9,8 @@ import SwiftUI
 struct GameView: View {
     let player: Player
     let room: Room
-    @StateObject private var vm = GameViewModel()
+    @EnvironmentObject var vm: GameViewModel
+    @EnvironmentObject var session: SessionModel
 
     var body: some View {
         Group {
@@ -93,8 +94,9 @@ struct GameView: View {
         .navigationTitle("Round \(vm.room?.currentRound ?? room.currentRound)")
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
-            // Initialize view model with room
+            // Initialize view model with room and session
             vm.room = room
+            vm.session = session
         }
     }
 }

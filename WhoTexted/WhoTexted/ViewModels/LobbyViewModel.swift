@@ -12,13 +12,26 @@ class LobbyViewModel: ObservableObject {
     @Published var room: Room?
     @Published var players: [Player] = []
     var player: Player?
+    
+    @Published var goingToGame: Bool = false
+    
+    var router: AppRouter?
+    var session: SessionModel?
 
     private var cancellable: AnyCancellable?
 
     init() {
+        // Ensure WebSocket is connected
+        if !WebSocketManager.shared.isConnected {
+            print("[LobbyView] WebSocket not connected, attempting to connect...")
+            WebSocketManager.shared.connect()
+        } else {
+            print("[LobbyView] WebSocket already connected")
+        }
         
         cancellable = NotificationCenter.default.publisher(for: .webSocketDidReceiveData)
             .compactMap { $0.object as? Data }
+            .receive(on: DispatchQueue.main)
             .sink { [weak self] data in
                 self?.handleServerResponse(data)
             }
@@ -75,12 +88,13 @@ class LobbyViewModel: ObservableObject {
                 
             case "room_joined", "room_update": // may need to separate cases
                 if let room = envelope.room {
+                    // Update session model to keep it in sync
+                    session?.updateRoom(room)
+                    
                     if room.state == .lobby {
                         // Still in lobby - just update room data
-                        DispatchQueue.main.async {
-                            self.room = room
-                            self.players = room.players
-                        }
+                        self.room = room
+                        self.players = room.players
                     } else if room.state == .playing || room.state == .finished {
                         // Room state changed to game state - transition to game
                         // This handles the case where room_update is sent before round_setup/prompt_display
@@ -88,10 +102,8 @@ class LobbyViewModel: ObservableObject {
                         handleGameStarting(envelope)
                     } else {
                         // Handle any other state changes
-                        DispatchQueue.main.async {
-                            self.room = room
-                            self.players = room.players
-                        }
+                        self.room = room
+                        self.players = room.players
                     }
                 }
             default:
@@ -114,11 +126,18 @@ class LobbyViewModel: ObservableObject {
             return
         }
         
+        guard let router = router, let session = session else {
+            print("[LobbyView] Router or session is nil")
+            return
+        }
+        
         print("[LobbyView] Transitioning to game with room state: \(room.state.rawValue), message type: \(envelope.type)")
         
-        // Ensure we're on main thread
-        DispatchQueue.main.async {
-            AppState.shared.screen = .game(room: room, player: player)
-        }
+        // Update session with latest room data
+        session.updateRoom(room)
+        session.setPlayer(player)
+        
+        // Navigate to game
+        router.navigateToGame(roomId: room.id)
     }
 }

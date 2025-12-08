@@ -9,6 +9,8 @@ import SwiftUI
 
 struct GameFinishedView: View {
     @ObservedObject var viewModel: GameViewModel
+    @EnvironmentObject var router: AppRouter
+    @EnvironmentObject var session: SessionModel
     
     var body: some View {
         VStack(spacing: 30) {
@@ -55,9 +57,8 @@ struct GameFinishedView: View {
             
             Button(action: {
                 // Navigate back to home
-                DispatchQueue.main.async {
-                    AppState.shared.screen = .home
-                }
+                session.clearSession()
+                router.navigateToHome()
             }) {
                 Text("Back to Home")
                     .font(.headline)

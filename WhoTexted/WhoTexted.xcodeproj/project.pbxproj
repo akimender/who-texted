@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		874C50B32EE6AD90004B9F85 /* AppRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 874C50B22EE6AD90004B9F85 /* AppRouter.swift */; };
+		874C50B52EE6AD98004B9F85 /* SessionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 874C50B42EE6AD98004B9F85 /* SessionModel.swift */; };
 		8773C2BA2EE1416300EB5D5A /* ChatMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8773C27E2EE1416300EB5D5A /* ChatMessage.swift */; };
 		8773C2BB2EE1416300EB5D5A /* GameResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8773C27F2EE1416300EB5D5A /* GameResponse.swift */; };
 		8773C2BC2EE1416300EB5D5A /* GameState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8773C2802EE1416300EB5D5A /* GameState.swift */; };
@@ -73,6 +75,8 @@
 		871740432ED9610500161FC0 /* WhoTexted.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WhoTexted.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		871740532ED9610600161FC0 /* WhoTextedTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WhoTextedTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8717405D2ED9610600161FC0 /* WhoTextedUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WhoTextedUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		874C50B22EE6AD90004B9F85 /* AppRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRouter.swift; sourceTree = "<group>"; };
+		874C50B42EE6AD98004B9F85 /* SessionModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionModel.swift; sourceTree = "<group>"; };
 		8773C27E2EE1416300EB5D5A /* ChatMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatMessage.swift; sourceTree = "<group>"; };
 		8773C27F2EE1416300EB5D5A /* GameResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameResponse.swift; sourceTree = "<group>"; };
 		8773C2802EE1416300EB5D5A /* GameState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameState.swift; sourceTree = "<group>"; };
@@ -161,6 +165,16 @@
 				8717405D2ED9610600161FC0 /* WhoTextedUITests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		874C50B12EE6AD81004B9F85 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				874C50B22EE6AD90004B9F85 /* AppRouter.swift */,
+				8773C2AE2EE1416300EB5D5A /* RootView.swift */,
+				874C50B42EE6AD98004B9F85 /* SessionModel.swift */,
+			);
+			path = App;
 			sourceTree = "<group>";
 		};
 		8773C2892EE1416300EB5D5A /* Models */ = {
@@ -274,6 +288,7 @@
 		8773C2B02EE1416300EB5D5A /* WhoTexted */ = {
 			isa = PBXGroup;
 			children = (
+				874C50B12EE6AD81004B9F85 /* App */,
 				8773C2892EE1416300EB5D5A /* Models */,
 				8773C28B2EE1416300EB5D5A /* Networking */,
 				8773C28D2EE1416300EB5D5A /* Preview Content */,
@@ -284,7 +299,6 @@
 				8773C2AB2EE1416300EB5D5A /* AppState.swift */,
 				8773C2AC2EE1416300EB5D5A /* Assets.xcassets */,
 				8773C2AD2EE1416300EB5D5A /* ContentView.swift */,
-				8773C2AE2EE1416300EB5D5A /* RootView.swift */,
 				8773C2AF2EE1416300EB5D5A /* WhoTextedApp.swift */,
 			);
 			path = WhoTexted;
@@ -452,6 +466,7 @@
 				8773C2BE2EE1416300EB5D5A /* Prompt.swift in Sources */,
 				8773C2C12EE1416300EB5D5A /* Round.swift in Sources */,
 				8773C2C02EE1416300EB5D5A /* RoomJoinedResponse.swift in Sources */,
+				874C50B52EE6AD98004B9F85 /* SessionModel.swift in Sources */,
 				8773C2E12EE1416300EB5D5A /* WhoTextedApp.swift in Sources */,
 				8773C2C82EE1416300EB5D5A /* ChatService.swift in Sources */,
 				8773C2DF2EE1416300EB5D5A /* ContentView.swift in Sources */,
@@ -469,6 +484,7 @@
 				8773C2C72EE1416300EB5D5A /* BackendService.swift in Sources */,
 				8773C2C52EE1416300EB5D5A /* WebSocketManager.swift in Sources */,
 				8773C2D32EE1416300EB5D5A /* MessageInputBar.swift in Sources */,
+				874C50B32EE6AD90004B9F85 /* AppRouter.swift in Sources */,
 				8773C2D52EE1416300EB5D5A /* PromptDisplayView.swift in Sources */,
 				8773C2DB2EE1416300EB5D5A /* HomeView.swift in Sources */,
 				8773C2D62EE1416300EB5D5A /* ResponseSubmissionView.swift in Sources */,

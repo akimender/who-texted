@@ -28,6 +28,8 @@ class GameViewModel: ObservableObject {
     @Published var winner: Player?
     @Published var allSubmitted: Bool = false
     @Published var allVoted: Bool = false
+    
+    var session: SessionModel?
 
     private var timer: Timer?
     private var cancellable: AnyCancellable?
@@ -35,6 +37,7 @@ class GameViewModel: ObservableObject {
     init() {
         cancellable = NotificationCenter.default.publisher(for: .webSocketDidReceiveData)
             .compactMap { $0.object as? Data }
+            .receive(on: DispatchQueue.main)
             .sink { [weak self] data in
                 self?.handleData(data)
             }
@@ -78,6 +81,8 @@ class GameViewModel: ObservableObject {
             case "room_update", "room_joined":
                 if let room = envelope.room {
                     self.room = room
+                    // Update session model to keep it in sync
+                    session?.updateRoom(room)
                     // Update responses if available
                     if let roundData = room.currentRoundData {
                         self.responses = roundData.responses
@@ -201,7 +206,7 @@ class GameViewModel: ObservableObject {
     
     func nextRound() {
         guard let room = room else { return }
-        guard let currentPlayer = room.players.first(where: { $0.id == AppState.shared.currentPlayerId }) else { return }
+        guard let currentPlayer = session?.currentPlayer else { return }
         guard currentPlayer.isHost else { return }
         
         GameService.shared.nextRound(roomId: room.id)

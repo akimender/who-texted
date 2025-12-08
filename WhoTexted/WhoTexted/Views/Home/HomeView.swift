@@ -10,6 +10,8 @@ import SwiftUI
 
 struct HomeView: View {
     @StateObject var vm = HomeViewModel()
+    @EnvironmentObject var router: AppRouter
+    @EnvironmentObject var session: SessionModel
 
     var body: some View {
         NavigationStack {
@@ -45,6 +47,10 @@ struct HomeView: View {
 
                 Spacer()
             }
+        }
+        .onAppear {
+            vm.router = router
+            vm.session = session
         }
     }
 }

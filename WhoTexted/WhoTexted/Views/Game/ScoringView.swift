@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ScoringView: View {
     @ObservedObject var viewModel: GameViewModel
+    @EnvironmentObject var session: SessionModel
     
     var body: some View {
         VStack(spacing: 20) {
@@ -52,7 +53,7 @@ struct ScoringView: View {
             .cornerRadius(12)
             .padding(.horizontal)
             
-            if let currentPlayer = viewModel.room?.players.first(where: { $0.id == AppState.shared.currentPlayerId }),
+            if let currentPlayer = session.currentPlayer,
                currentPlayer.isHost {
                 Button(action: {
                     viewModel.nextRound()
