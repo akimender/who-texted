@@ -2,7 +2,6 @@ from fastapi import WebSocket
 import random
 import uuid
 
-from constants import animal_names
 from models import Player, Room, Round, Response, Vote
 from prompts import generate_prompt
 
@@ -21,13 +20,6 @@ def generate_room_code(rooms=None):
             return code
     # Fallback: use UUID if we can't generate unique code
     return str(uuid.uuid4())[:8].upper()
-
-def get_unique_display_name(players):
-    used = {p.displayName for p in players}
-    for name in animal_names:
-        if name not in used:
-            return name
-    return "Anonymous"
 
 
 async def send(ws: WebSocket, payload: dict):
@@ -60,7 +52,7 @@ async def broadcast(rooms, connections, room_id: str, payload: dict, exclude_pla
 
 def initialize_new_room(rooms, player_id: str, username: str):
     room_id = generate_room_code(rooms)
-    display_name = get_unique_display_name([]) # assign a display name to hosting player
+    display_name = username # just assign username to player creating game for now
 
     host_player = Player(
         id=player_id,
@@ -87,7 +79,7 @@ def initialize_new_room(rooms, player_id: str, username: str):
 
 def join_room(rooms, player_id: str, username: str, room_id: str):
     room: Room = rooms[room_id]
-    display_name = get_unique_display_name(room.players)
+    display_name = username
 
     # Create new player for joining player
     new_player = Player(
