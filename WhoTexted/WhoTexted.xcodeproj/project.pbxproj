@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		872F170D2EF36CDA0047029F /* InstructionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 872F170C2EF36CDA0047029F /* InstructionsView.swift */; };
 		874C50B32EE6AD90004B9F85 /* AppRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 874C50B22EE6AD90004B9F85 /* AppRouter.swift */; };
 		874C50B52EE6AD98004B9F85 /* SessionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 874C50B42EE6AD98004B9F85 /* SessionModel.swift */; };
 		8773C2BA2EE1416300EB5D5A /* ChatMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8773C27E2EE1416300EB5D5A /* ChatMessage.swift */; };
@@ -74,6 +75,7 @@
 		871740432ED9610500161FC0 /* WhoTexted.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WhoTexted.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		871740532ED9610600161FC0 /* WhoTextedTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WhoTextedTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8717405D2ED9610600161FC0 /* WhoTextedUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WhoTextedUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		872F170C2EF36CDA0047029F /* InstructionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstructionsView.swift; sourceTree = "<group>"; };
 		874C50B22EE6AD90004B9F85 /* AppRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRouter.swift; sourceTree = "<group>"; };
 		874C50B42EE6AD98004B9F85 /* SessionModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionModel.swift; sourceTree = "<group>"; };
 		8773C27E2EE1416300EB5D5A /* ChatMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatMessage.swift; sourceTree = "<group>"; };
@@ -253,6 +255,7 @@
 				8773C2A22EE1416300EB5D5A /* RoundSetupView.swift */,
 				8773C2A32EE1416300EB5D5A /* ScoringView.swift */,
 				8773C2A42EE1416300EB5D5A /* VotingView.swift */,
+				872F170C2EF36CDA0047029F /* InstructionsView.swift */,
 			);
 			path = Game;
 			sourceTree = "<group>";
@@ -477,6 +480,7 @@
 				8773C2D02EE1416300EB5D5A /* ChatScrollView.swift in Sources */,
 				8773C2C92EE1416300EB5D5A /* GameService.swift in Sources */,
 				8773C2D12EE1416300EB5D5A /* GameFinishedView.swift in Sources */,
+				872F170D2EF36CDA0047029F /* InstructionsView.swift in Sources */,
 				8773C2C72EE1416300EB5D5A /* BackendService.swift in Sources */,
 				8773C2C52EE1416300EB5D5A /* WebSocketManager.swift in Sources */,
 				8773C2D32EE1416300EB5D5A /* MessageInputBar.swift in Sources */,

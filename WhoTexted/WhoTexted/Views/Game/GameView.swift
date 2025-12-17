@@ -20,11 +20,15 @@ struct GameView: View {
             if let roundState = currentRoundState {
                 // Use Round.state for game phases (per spec)
                 switch roundState {
-                case "prompt":
-                    PromptDisplayView(
-                        promptText: vm.promptText,
-                        targetPlayerName: vm.targetPlayerName
-                    )
+                    
+                case "instructions":
+                    InstructionsView(targetPlayerName: vm.targetPlayerName)
+                    
+//                case "prompt":
+//                    PromptDisplayView(
+//                        promptText: vm.promptText,
+//                        targetPlayerName: vm.targetPlayerName
+//                    )
                     
                 case "responding":
                     ResponseSubmissionView(
